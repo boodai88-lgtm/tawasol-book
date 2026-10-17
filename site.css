@@ -38,6 +38,7 @@ body{background:var(--paper);color:var(--ink-900)}
 .hero{display:grid;grid-template-columns:1fr;gap:36px;align-items:center;padding:32px 0 40px}
 .hero>div{min-width:0}
 .hero h1{font-size:54px;line-height:1;margin:10px 0 18px}
+.hero h1 .h1-sub{display:block;font-family:var(--font-body);font-size:18px;font-weight:600;letter-spacing:normal;line-height:1.4;color:var(--ink-700);margin-top:8px}
 .hero .lead{font-size:17px;line-height:1.6;color:var(--ink-700);max-width:54ch;margin:0 0 26px}
 .actions{display:flex;flex-direction:column;align-items:stretch;gap:12px}
 .actions .btn{width:100%}
