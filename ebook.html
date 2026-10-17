@@ -1,0 +1,49 @@
+<!-- @dsCard group="Book Site" viewport="390x844" name="Book site — Ebook library" subtitle="Access gate → watermarked reader + licensed download" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ebook — Tawasol, The Guidebook</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="ebook">
+<header class="nav"><div class="wrap"><a class="brand" href="index.html"><img src="img/wordmark.png" alt="Tawasol"><span>The Guidebook</span></a><div class="nav-right"><a class="btn btn-outline btn-sm ar" href="index.html#arabic" lang="ar" dir="rtl">النسخة العربية</a><button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" data-menu=""><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/menu.svg)"></span></button></div><nav class="links"><a href="index.html" data-p="index">The book</a><a href="order.html" data-p="order">Order</a><a href="ebook.html" data-p="ebook">Ebook</a><a href="audiobook.html" data-p="audiobook">Audiobook</a><a class="btn btn-outline btn-sm ar" href="index.html#arabic" lang="ar" dir="rtl">النسخة العربية</a><a class="btn btn-primary btn-sm" href="order.html">Order now</a></nav></div></header>
+
+<main class="wrap">
+<div class="ph" data-screen-label="Ebook header"><span class="eyebrow">Ebook</span><h1>Your reading library</h1><p>Read online, or download a copy licensed to you. Every page is marked with your name and order number.</p></div>
+
+<section id="gate" class="card gate" data-screen-label="Access gate">
+  <h3>Unlock your ebook</h3>
+  <p>Enter the email you ordered with and the access code from your receipt.</p>
+  <form id="gateForm" class="stack" style="gap:14px;margin-top:18px">
+    <div class="field"><label for="gEmail">Email</label><input id="gEmail" type="email" required="" placeholder="you@email.com"></div>
+    <div class="field"><label for="gCode">Access code</label><input id="gCode" required="" placeholder="TAWASOL-XXXX-XXXX" style="letter-spacing:.08em;text-transform:uppercase"><span class="hint">Preview code for this demo: TAWASOL-DEMO</span></div>
+    <p id="gErr" class="err" hidden="">We couldn’t match that code. Check the email we sent after your purchase, or write to us.</p>
+    <button class="btn btn-primary btn-block" type="submit">Open my library</button>
+    <a class="btn btn-ghost btn-sm" href="order.html?f=ebook" style="align-self:center">Don’t have a copy yet? Get the ebook</a>
+  </form>
+</section>
+
+<section id="library" hidden="" data-screen-label="Ebook library">
+  <div class="lic"><div><b>Personal licence</b><span data-lic-email="">you@email.com</span> &nbsp;·&nbsp; Order <span data-lic-order="">TW-10421</span> &nbsp;·&nbsp; Not for redistribution</div><a href="#" data-signout="">Sign out</a></div>
+  <div class="dl">
+    <a class="btn btn-primary" href="#reader"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/book-open.svg)"></span>Read online</a>
+    <button class="btn btn-outline" type="button" title="Issued by the licence server after purchase"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/download.svg)"></span>Download licensed PDF · English</button>
+    <button class="btn btn-outline" type="button" title="Issued by the licence server after purchase"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/download.svg)"></span>النسخة العربية</button>
+  </div>
+  <div class="lib">
+    <aside class="card" style="padding:14px 10px"><div class="eyebrow" style="padding:6px 14px 4px">Contents</div><ul class="toc" data-chapters=""></ul></aside>
+    <article id="reader" class="card reader" data-wm="Licensed copy">
+      <div id="readerBody"></div>
+      <div class="foot"><span>Tawasol, The Guidebook · <span id="rdTitle">Introduction</span></span><span>Licensed to <span data-lic-email="">you@email.com</span> · <span data-lic-order="">TW-10421</span></span></div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><div><img src="img/wordmark.png" alt="Tawasol"><p>Tawasol, The Guidebook. Written by Dr. Bibi Alamiri, with Sulaiman Boodai. Illustrations by Marah Alkazak.</p></div><div class="cols"><div><b>Book</b><a href="index.html">About the book</a><a href="order.html">Order</a><a href="ebook.html">Ebook</a><a href="audiobook.html">Audiobook</a></div><div><b>Tawasol</b><a href="#">Wellbeing clinic</a><a href="#">Contact</a><a href="#">Licence &amp; privacy</a></div></div><div class="fine"><span>© 2026 Tawasol · Dr. Bibi Alamiri</span><span>Digital editions are licensed per reader. Copying or sharing requires written consent.</span></div></div></footer>
+<script src="site.js"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#c2bd83"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#2b2926">T</text></svg></template>
+</body>
+</html>

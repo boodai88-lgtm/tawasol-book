@@ -1,0 +1,265 @@
+/* Tawasol design tokens — generated copy of /tokens for the standalone book site.
+   Regenerate from /tokens if the design system changes. */
+
+/* fonts */
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sacramento&display=swap');
+
+/* colors */
+:root {
+  
+  --paper:        #f3eddf; 
+  --white:        #ffffff;
+  --mauve:        #c98eae; 
+  --rose:         #e5c3b7; 
+  --peach:        #f2dccd; 
+  --sage:         #c2bd83; 
+
+  
+  --cream-50:  #faf6ec;
+  --cream-100: #f6f1e6;
+  --cream-200: #f3eddf;
+  --cream-300: #e9e0cd;
+  --cream-400: #ded3bb;
+
+  
+  --ink-900: #2b2926; 
+  --ink-700: #4a463f;
+  --ink-500: #6b665c; 
+  --ink-400: #8b857a; 
+  --ink-300: #b4ad9f; 
+
+  
+  --sage-100: #edecd9;
+  --sage-200: #dcd9b6;
+  --sage-300: #c2bd83;
+  --sage-500: #9d9857;
+  --sage-700: #726e3d;
+
+  
+  --mauve-100: #f2e4ec;
+  --mauve-200: #e4c9d8;
+  --mauve-300: #c98eae;
+  --mauve-500: #a9668f;
+  --mauve-700: #7e496a;
+
+  
+  --rose-100:  #faeee7;
+  --rose-200:  #f2dccd;
+  --rose-300:  #e5c3b7;
+  --rose-500:  #cf9d8b;
+
+  
+  --surface-page:    var(--paper);
+  --surface-card:    var(--white);
+  --surface-raised:  var(--cream-100);
+  --surface-sunken:  var(--cream-300);
+  --surface-inverse: var(--ink-900);
+  --surface-accent:  var(--sage-100);
+  --surface-blush:   var(--rose-100);
+
+  
+  --text-primary:   var(--ink-900);
+  --text-secondary: var(--ink-500);
+  --text-muted:     var(--ink-400);
+  --text-disabled:  var(--ink-300);
+  --text-inverse:   var(--paper);
+  --text-accent:    var(--sage-700);
+  --text-on-accent: var(--ink-900);
+
+  
+  --border-hairline: #e4dbc8;      
+  --border-strong:   var(--cream-400);
+  --border-ink:      var(--ink-900); 
+  --border-focus:    var(--mauve-500);
+
+  
+  --accent:          var(--sage-300); 
+  --accent-hover:    var(--sage-500);
+  --accent-press:    var(--sage-700);
+  --accent-secondary: var(--mauve-300);
+  --accent-soft:     var(--peach);
+
+  
+  --status-positive: #8a9a5b;
+  --status-notice:   #c9a86a;
+  --status-critical: #b9707e;
+  --status-info:     var(--mauve-500);
+
+  
+  --ring: 0 0 0 3px rgba(169, 102, 143, 0.32);
+}
+
+/* typography */
+:root {
+  --font-script:  "Sacramento", "Snell Roundhand", cursive;
+  --font-display: "Jost", "Century Gothic", system-ui, sans-serif;
+  --font-body:    "Mulish", system-ui, -apple-system, sans-serif;
+
+  
+  --text-2xs: 0.6875rem; 
+  --text-xs:  0.75rem;   
+  --text-sm:  0.875rem;  
+  --text-md:  1rem;      
+  --text-lg:  1.1875rem; 
+  --text-xl:  1.5rem;    
+  --text-2xl: 2rem;      
+  --text-3xl: 2.75rem;   
+  --text-4xl: 3.75rem;   
+  --text-5xl: 5rem;      
+  --text-script: 4rem;   
+
+  
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+
+  
+  --leading-tight:  1.1;
+  --leading-snug:   1.28;
+  --leading-normal: 1.6;
+  --leading-relaxed:1.8;
+
+  
+  --tracking-tight:  -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.08em;
+  --tracking-wider:  0.18em;  
+  --tracking-widest: 0.32em;
+}
+
+/* spacing */
+:root {
+  --space-0:  0;
+  --space-1:  0.25rem; 
+  --space-2:  0.5rem;  
+  --space-3:  0.75rem; 
+  --space-4:  1rem;    
+  --space-5:  1.5rem;  
+  --space-6:  2rem;    
+  --space-7:  3rem;    
+  --space-8:  4rem;    
+  --space-9:  6rem;    
+  --space-10: 8rem;    
+
+  
+  --container-sm:  40rem;   
+  --container-md:  60rem;   
+  --container-lg:  75rem;   
+  --container-xl:  90rem;   
+  --gutter:        var(--space-5);
+  --section-y:     var(--space-9);
+}
+
+/* effects */
+:root {
+  
+  --radius-xs:  6px;
+  --radius-sm:  10px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-xl:  36px;
+  --radius-2xl: 48px;
+  --radius-pill: 999px;
+  
+  --radius-arch: 999px 999px 24px 24px;
+
+  
+  --border-thin:  1px;
+  --border-line:  1.5px; 
+  --border-bold:  2px;
+
+  
+  --shadow-xs: 0 1px 2px rgba(43, 41, 38, 0.05);
+  --shadow-sm: 0 2px 8px rgba(43, 41, 38, 0.06);
+  --shadow-md: 0 8px 24px rgba(43, 41, 38, 0.08);
+  --shadow-lg: 0 18px 48px rgba(43, 41, 38, 0.10);
+  --shadow-focus-inset: inset 0 0 0 1.5px var(--border-focus);
+
+  
+  --blur-panel: 10px;
+
+  
+  --ease-calm:  cubic-bezier(0.22, 0.61, 0.36, 1); 
+  --ease-inout: cubic-bezier(0.45, 0, 0.2, 1); 
+  --dur-fast:   160ms; 
+  --dur-base:   260ms; 
+  --dur-slow:   440ms; 
+  --dur-drift:  900ms; 
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms; 
+    --dur-base: 0ms; 
+    --dur-slow: 0ms; 
+    --dur-drift: 0ms; 
+  }
+}
+
+/* base */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  color: var(--text-primary);
+  line-height: var(--leading-tight);
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+h1 { font-size: var(--text-4xl); letter-spacing: var(--tracking-tight); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl);  font-weight: var(--weight-regular); }
+
+p { margin: 0 0 1em; max-width: 68ch; text-wrap: pretty; }
+
+.t-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.t-eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--mauve-500);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease-calm);
+}
+a:hover { color: var(--mauve-700); text-decoration: underline; }
+
+hr {
+  border: none;
+  border-top: var(--border-thin) solid var(--border-hairline);
+  margin: var(--space-6) 0;
+}
+
+::selection { background: var(--sage-200); color: var(--ink-900); }
+
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: var(--radius-xs); }
+
+.t-container { max-width: var(--container-lg); margin-inline: auto; padding-inline: var(--gutter); }

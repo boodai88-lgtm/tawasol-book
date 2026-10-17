@@ -1,0 +1,69 @@
+<!-- @dsCard group="Book Site" viewport="390x844" name="Book site — Order" subtitle="Formats, delivery, secure checkout hand-off" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order — Tawasol, The Guidebook</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="order">
+<header class="nav"><div class="wrap"><a class="brand" href="index.html"><img src="img/wordmark.png" alt="Tawasol"><span>The Guidebook</span></a><div class="nav-right"><a class="btn btn-outline btn-sm ar" href="index.html#arabic" lang="ar" dir="rtl">النسخة العربية</a><button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" data-menu=""><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/menu.svg)"></span></button></div><nav class="links"><a href="index.html" data-p="index">The book</a><a href="order.html" data-p="order">Order</a><a href="ebook.html" data-p="ebook">Ebook</a><a href="audiobook.html" data-p="audiobook">Audiobook</a><a class="btn btn-outline btn-sm ar" href="index.html#arabic" lang="ar" dir="rtl">النسخة العربية</a><a class="btn btn-primary btn-sm" href="order.html">Order now</a></nav></div></header>
+
+<main class="wrap">
+<div class="ph" data-screen-label="Order header"><span class="eyebrow">Order</span><h1>Choose your copy</h1><p>Pick one format or all three. Digital editions are licensed to the person ordering and unlocked with an access code sent by email.</p></div>
+
+<div class="order" data-screen-label="Order form">
+  <form id="orderForm" class="stack" novalidate="">
+    <div class="card">
+      <h3 class="step"><i>1</i> Formats</h3>
+      <div class="stack" style="gap:12px">
+        <label class="opt" data-k="print"><input type="checkbox" tabindex="-1"><span><b>Printed book</b><small>Bilingual edition — English and Arabic meet in the middle</small><span id="qtyRow" class="qty" hidden=""><button type="button" id="qtyMinus" aria-label="Fewer">−</button><span id="qtyVal">1</span><button type="button" id="qtyPlus" aria-label="More">+</button></span></span><span class="p" data-price="print">KD 15.000 </span></label>
+        <label class="opt" data-k="ebook"><input type="checkbox" tabindex="-1"><span><b>Ebook</b><small>English &amp; Arabic editions · read online or download your licensed copy</small></span><span class="p" data-price="ebook">KD 7.000 </span></label>
+        <label class="opt" data-k="audiobook"><input type="checkbox" tabindex="-1"><span><b>Audiobook</b><small>English · written and narrated by Dr. Bibi Alamiri</small></span><span class="p" data-price="audiobook">KD 9.000 </span></label>
+      </div>
+    </div>
+
+    <div class="card" id="delivery" hidden="">
+      <h3 class="step"><i>2</i> Delivery</h3>
+      <div class="stack" style="gap:16px">
+        <div class="field"><label for="ship">Region</label><select id="ship"><option value="kw">Kuwait</option><option value="gcc">GCC</option><option value="intl">International</option></select></div>
+        <div class="field"><label for="addr">Address</label><input id="addr" data-req="" placeholder="Area, block, street, building"></div>
+        <div class="form-grid"><div class="field"><label for="city">City</label><input id="city" data-req="" placeholder="Kuwait City"></div><div class="field"><label for="country">Country</label><input id="country" data-req="" placeholder="Kuwait"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="step"><i>3</i> Your details</h3>
+      <div class="stack" style="gap:16px">
+        <div class="form-grid"><div class="field"><label for="name">Full name</label><input id="name" required="" placeholder="As it should appear on your licence"></div><div class="field"><label for="phone">Phone</label><input id="phone" type="tel" placeholder="+965"></div></div>
+        <div class="field"><label for="email">Email</label><input id="email" type="email" required="" placeholder="you@email.com"><span class="hint">Your access code and receipt are sent here.</span></div>
+        <label class="check"><input type="checkbox" required=""><span>I understand that the ebook and audiobook are licensed to me personally, are watermarked with my details, and may not be copied, shared or resold without written consent from Tawasol.</span></label>
+      </div>
+    </div>
+  </form>
+
+  <div id="orderDone" class="card done" hidden="">
+    <span class="ico ico-lg" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/sprout.svg);color:var(--sage-500)"></span>
+    <h3>Thank you — order <span id="orderNo">TW-10421</span> is on its way to payment.</h3>
+    <p>You’re being taken to our secure payment page. A receipt will arrive at <b id="orderEmail">you@email.com</b>.</p>
+    <div id="orderDigital"><p>Once payment clears, the same email brings your personal access code for the ebook and audiobook library.</p><div class="dl" style="justify-content:center"><a class="btn btn-outline btn-sm" href="ebook.html">Open ebook library</a><a class="btn btn-outline btn-sm" href="audiobook.html">Open audiobook</a></div></div>
+    <a class="btn btn-ghost btn-sm" href="index.html">Back to the book</a>
+  </div>
+
+  <aside class="card sum" data-screen-label="Summary">
+    <h4>Your order</h4>
+    <div id="sumLines"></div>
+    <div id="sumEmpty" class="empty">Choose a format to begin.</div>
+    <div id="sumTotal" class="ln total" hidden=""><span>Total</span><span id="sumTotalVal">KD 0.000</span></div>
+    <button id="payBtn" class="btn btn-primary btn-block is-off" type="submit" form="orderForm" style="margin-top:14px">Continue to secure payment</button>
+    <p class="fine">Payment is taken on our provider’s secure page (KNET, Visa, Mastercard). We never see or store your card details. Printed books ship within 5 working days.</p>
+  </aside>
+</div>
+</main>
+
+<footer><div class="wrap"><div><img src="img/wordmark.png" alt="Tawasol"><p>Tawasol, The Guidebook. Written by Dr. Bibi Alamiri, with Sulaiman Boodai. Illustrations by Marah Alkazak.</p></div><div class="cols"><div><b>Book</b><a href="index.html">About the book</a><a href="order.html">Order</a><a href="ebook.html">Ebook</a><a href="audiobook.html">Audiobook</a></div><div><b>Tawasol</b><a href="#">Wellbeing clinic</a><a href="#">Contact</a><a href="#">Licence &amp; privacy</a></div></div><div class="fine"><span>© 2026 Tawasol · Dr. Bibi Alamiri</span><span>Digital editions are licensed per reader. Copying or sharing requires written consent.</span></div></div></footer>
+<script src="site.js"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#c2bd83"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#2b2926">T</text></svg></template>
+</body>
+</html>

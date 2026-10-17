@@ -1,0 +1,60 @@
+<!-- @dsCard group="Book Site" viewport="390x844" name="Book site — Audiobook" subtitle="Access gate → streaming player with chapters" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audiobook — Tawasol, The Guidebook</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-page="audiobook">
+<header class="nav"><div class="wrap"><a class="brand" href="index.html"><img src="img/wordmark.png" alt="Tawasol"><span>The Guidebook</span></a><div class="nav-right"><a class="btn btn-outline btn-sm ar" href="index.html#arabic" lang="ar" dir="rtl">النسخة العربية</a><button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" data-menu=""><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/menu.svg)"></span></button></div><nav class="links"><a href="index.html" data-p="index">The book</a><a href="order.html" data-p="order">Order</a><a href="ebook.html" data-p="ebook">Ebook</a><a href="audiobook.html" data-p="audiobook">Audiobook</a><a class="btn btn-outline btn-sm ar" href="index.html#arabic" lang="ar" dir="rtl">النسخة العربية</a><a class="btn btn-primary btn-sm" href="order.html">Order now</a></nav></div></header>
+
+<main class="wrap">
+<div class="ph" data-screen-label="Audiobook header"><span class="eyebrow">Audiobook</span><h1>Listen, chapter by chapter</h1><p>Written and narrated by Dr. Bibi Alamiri. Streams to your signed-in devices through secure, expiring links.</p></div>
+
+<section id="gate" class="card gate" data-screen-label="Access gate">
+  <h3>Unlock your audiobook</h3>
+  <p>Enter the email you ordered with and the access code from your receipt.</p>
+  <form id="gateForm" class="stack" style="gap:14px;margin-top:18px">
+    <div class="field"><label for="gEmail">Email</label><input id="gEmail" type="email" required="" placeholder="you@email.com"></div>
+    <div class="field"><label for="gCode">Access code</label><input id="gCode" required="" placeholder="TAWASOL-XXXX-XXXX" style="letter-spacing:.08em;text-transform:uppercase"><span class="hint">Preview code for this demo: TAWASOL-DEMO</span></div>
+    <p id="gErr" class="err" hidden="">We couldn’t match that code. Check the email we sent after your purchase, or write to us.</p>
+    <button class="btn btn-primary btn-block" type="submit">Open my library</button>
+    <a class="btn btn-ghost btn-sm" href="order.html?f=audiobook" style="align-self:center">Don’t have a copy yet? Get the audiobook</a>
+  </form>
+</section>
+
+<section id="library" hidden="" data-screen-label="Audiobook library">
+  <div class="lic"><div><b>Personal licence</b><span data-lic-email="">you@email.com</span> &nbsp;·&nbsp; Order <span data-lic-order="">TW-10421</span> &nbsp;·&nbsp; Streaming on up to 3 devices</div><a href="#" data-signout="">Sign out</a></div>
+  <div class="lib lib-player">
+    <div>
+      <div id="player" class="card player" data-screen-label="Player">
+        <audio id="audio" preload="none"></audio>
+        <div class="now"><div class="art"><img src="img/wordmark.png" alt=""></div><div class="t"><b id="npTitle">Introduction</b><span id="npSub">Chapter 3 of 9</span></div></div>
+        <div class="bar"><i id="barFill"></i></div>
+        <div class="times"><span id="tCur">00:00</span><span id="tDur">––:––</span></div>
+        <div class="ctl">
+          <button id="prev" aria-label="Previous chapter"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/skip-back.svg)"></span></button>
+          <button id="back" aria-label="Back 15 seconds"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/rotate-ccw.svg)"></span></button>
+          <button id="play" class="play" aria-label="Play"><span id="playIco" class="ico ico-lg" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/play.svg)"></span></button>
+          <button id="fwd" aria-label="Forward 15 seconds"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/rotate-cw.svg)"></span></button>
+          <button id="next" aria-label="Next chapter"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/skip-forward.svg)"></span></button>
+          <button id="spd" class="spd" aria-label="Playback speed">1×</button>
+        </div>
+      </div>
+      <div class="card tracks" style="padding:14px 10px"><div class="eyebrow" style="padding:6px 14px 4px">Chapters</div><ul class="toc" data-chapters=""></ul></div>
+    </div>
+    <aside class="stack">
+      <div class="card card-accent"><h4 style="margin:0 0 8px">Offline listening</h4><p style="margin:0;font-size:14.5px;color:var(--ink-700)">Chapters you have started stay available on this device for 30 days. Files are encrypted and play only in your signed-in library.</p></div>
+      <div class="card card-blush"><h4 style="margin:0 0 8px">Narration</h4><p style="margin:0;font-size:14.5px;color:var(--ink-700)">Tawasol, The Guidebook. Written and narrated by Dr. Bibi Alamiri. With Sulaiman Boodai. Illustrations by Marah Alkazak.</p></div>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><div><img src="img/wordmark.png" alt="Tawasol"><p>Tawasol, The Guidebook. Written by Dr. Bibi Alamiri, with Sulaiman Boodai. Illustrations by Marah Alkazak.</p></div><div class="cols"><div><b>Book</b><a href="index.html">About the book</a><a href="order.html">Order</a><a href="ebook.html">Ebook</a><a href="audiobook.html">Audiobook</a></div><div><b>Tawasol</b><a href="#">Wellbeing clinic</a><a href="#">Contact</a><a href="#">Licence &amp; privacy</a></div></div><div class="fine"><span>© 2026 Tawasol · Dr. Bibi Alamiri</span><span>Digital editions are licensed per reader. Copying or sharing requires written consent.</span></div></div></footer>
+<script src="site.js"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#c2bd83"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#2b2926">T</text></svg></template>
+</body>
+</html>
