@@ -1,0 +1,27 @@
+name = "tawasol-book-api"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+# KV: create two namespaces in the Cloudflare dashboard (Storage & Databases → KV) and paste their IDs here.
+[[kv_namespaces]]
+binding = "ORDERS"
+id = "REPLACE_WITH_ORDERS_KV_ID"
+
+[[kv_namespaces]]
+binding = "CODES"
+id = "REPLACE_WITH_CODES_KV_ID"
+
+[vars]
+# Sandbox while testing. Production base URL comes from your UPayments dashboard (the plugins use https://apiv2api.upayments.com).
+UPAYMENTS_BASE = "https://sandboxapi.upayments.com"
+# Where the static site lives — no trailing slash.
+SITE_URL = "https://boodai88-lgtm.github.io/tawasol-book"
+# Sender for receipts (needs a verified domain in Resend; the onboarding address works for tests only).
+FROM_EMAIL = "Tawasol <orders@tawasol.clinic>"
+
+# Secrets — never put these in the file or in GitHub. Set them in the dashboard
+# (Worker → Settings → Variables & Secrets → Add → type Secret) or with `wrangler secret put NAME`:
+#   UPAYMENTS_TOKEN    Bearer API key (sandbox: NWty8gdjt79cf756hdtyu6u8jht5ns6gfhgy8hdjL)
+#   UPAYMENTS_SECRET   HMAC secret key (sandbox: sk_test_01a0a4b450b4c4738b586d7f33134d44)
+#   SESSION_SECRET     any long random string (signs licence sessions)
+#   RESEND_API_KEY     optional — enables receipt + access-code emails

@@ -7,9 +7,9 @@ window.TAWASOL_SITE = {
   licenseApi: "",
   demoCode: "TAWASOL-DEMO",
   products: {
-    print:     { title: "Printed book", sub: "Bilingual edition — English and Arabic meet in the middle", price: 15.000 },
-    ebook:     { title: "Ebook", sub: "English & Arabic editions · read online or download your licensed copy", price: 7.000 },
-    audiobook: { title: "Audiobook", sub: "English · written and narrated by Dr. Bibi Alamiri", price: 9.000 },
+    print:     { title: "Printed book", sub: "Bilingual edition — English and Arabic meet in the middle", price: 20.000 },
+    ebook:     { title: "Ebook", sub: "English & Arabic editions · read online or download your licensed copy", price: 10.000 },
+    audiobook: { title: "Audiobook", sub: "English · written and narrated by Dr. Bibi Alamiri", price: 15.000 },
   },
   shipping: { kw: { label: "Kuwait", price: 2.000 }, gcc: { label: "GCC", price: 6.000 }, intl: { label: "International", price: 12.000 } },
   chapters: ["Opening credits","Acknowledgment","Introduction","The Methods","Method I: Tawasol Model","Method II: Self-value Tree","Method III: The Boundaries Castle","Summaries","About The Book"],
