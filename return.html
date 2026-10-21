@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Order status · Tawasol</title><meta name="robots" content="noindex">
+<meta name="theme-color" content="#f3eddf"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+</head>
+<body data-page="return" data-title="rt_order">
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap" style="max-width:640px">
+  <div class="status-card" id="card" aria-live="polite"><div class="spinner"></div><h1 class="big" data-i18n="rt_confirming">Confirming your payment…</h1><p data-i18n="rt_wait">This usually takes a few seconds.</p></div>
+  <div class="section-card" id="detail" hidden><div id="items"></div></div>
+</main>
+<footer id="footer"></footer>
+<script>
+(async () => {
+  const { t, pick, fmt, api, live, esc, $ } = TW, P = new URLSearchParams(location.search), id = P.get('o'), key = P.get('k'), card = $('#card');
+  const stored = JSON.parse(localStorage.getItem('tw_last_order') || 'null'), oid = id || stored?.id, okey = key || stored?.key;
+  const ICON = TW.ICON, back = `<p style="margin-top:18px"><a class="btn btn-outline" href="index.html">${t('rt_back')}</a></p>`;
+  if (!oid || !okey || !live) { card.innerHTML = `<h1 class="big">${t('rt_not')}</h1><p>${live ? '' : t('preview_api')}</p>${back}`; return; }
+  const paint = (s) => {
+    if (s.status === 'paid') {
+      const digital = s.grants && s.grants.length, email = localStorage.getItem('tw_last_email') || s.email;
+      card.innerHTML = `<span class="ico ico-lg" style="--i:url(${ICON('check')});margin:0 auto 6px"></span><h1 class="big">${t('rt_paid')}</h1><p>${t('rt_order')} <b>${esc(s.order)}</b> · <span class="badge">${t('rt_paid_badge')}</span> · ${fmt(s.total_fils)}</p><p>${t('rt_emailed')} <b>${esc(email)}</b></p>${digital ? `<h2 style="font-size:24px;margin:22px 0 6px">${t('rt_lib_ready')}</h2><p style="margin-bottom:14px">${s.grants.map((g) => esc(pick(g, 'title'))).join('<br>')}</p><a class="btn btn-primary btn-lg" href="library.html?e=${encodeURIComponent(email)}">${t('rt_open_lib')}</a>` : ''}${s.needs_shipping ? `<p style="margin-top:18px">${s.shipping_zone === 'pickup' ? t('rt_pickup') : t('rt_print', { d: TW.lang === 'ar' ? '٥ أيام عمل' : '5 working days' })}</p>` : ''}${back}`;
+      $('#detail').hidden = false; $('#items').innerHTML = s.items.map((i) => `<div class="line"><div class="nm"><b>${esc(pick(i, 'name'))}${i.qty > 1 ? ' × ' + i.qty : ''}</b></div><span class="amt">${fmt(i.line_fils)}</span></div>`).join('') + (s.shipping_fils ? `<div class="line"><div class="nm"><b>${t('delivery')}</b></div><span class="amt">${fmt(s.shipping_fils)}</span></div>` : '') + (s.discount_fils ? `<div class="line"><div class="nm"><b>${t('discount')}</b></div><span class="amt">− ${fmt(s.discount_fils)}</span></div>` : '');
+      localStorage.removeItem('tw_last_order'); return true;
+    }
+    if (['failed', 'cancelled', 'expired'].includes(s.status) || (s.status === 'pending' && P.get('cancelled'))) {
+      card.innerHTML = `<h1 class="big">${t('rt_not')}</h1><p>${P.get('cancelled') ? t('rt_cancelled') : s.status === 'expired' ? t('rt_expired') : ''} ${t('rt_nothing_charged')}</p><p style="margin-top:16px"><button class="btn btn-primary btn-lg" id="retry">${t('rt_try')}</button></p><p class="err" id="rerr"></p>${back}`;
+      $('#retry').addEventListener('click', async () => { $('#retry').disabled = true; try { const r = await api(`/api/orders/${encodeURIComponent(oid)}/retry?k=${encodeURIComponent(okey)}`, { method: 'POST', auth: false }); if (r.link) location.href = r.link; else if (r.status === 'paid') location.reload(); } catch (e) { $('#rerr').textContent = e.message; $('#retry').disabled = false; } });
+      return true;
+    }
+    return false;
+  };
+  let tries = 0; const poll = async () => {
+    try { const s = await api(`/api/orders/${encodeURIComponent(oid)}?k=${encodeURIComponent(okey)}`, { auth: false }); if (paint(s)) return; }
+    catch (e) { if (e.status === 404) { card.innerHTML = `<h1 class="big">${t('rt_not')}</h1><p>${esc(e.message)}</p>${back}`; return; } }
+    if (++tries === 20) card.innerHTML = `<div class="spinner"></div><h1 class="big">${t('rt_slow')}</h1><p>${t('rt_slow_p')}</p>${back}`;
+    setTimeout(poll, tries < 20 ? 2500 : 10000);
+  };
+  poll();
+})();
+</script>
+</body>
+</html>

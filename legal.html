@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terms, licence & privacy · Tawasol</title>
+<meta name="theme-color" content="#f3eddf"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+</head>
+<body data-page="legal">
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap" style="max-width:720px;font-size:15.5px;line-height:1.65">
+  <div class="page-head"><h1 id="l-title">Terms, licence &amp; privacy</h1><p id="l-sub"></p></div>
+  <p class="ribbon" id="l-ribbon"></p>
+  <div id="sections"></div>
+</main>
+<footer id="footer"></footer>
+<script>
+(function () {
+  const C = window.TAWASOL_CONFIG || {}, ar = document.documentElement.lang === 'ar', esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const H = ar ? { title: 'الشروط والترخيص والخصوصية', sub: 'مسودة للمراجعة قبل الإطلاق. البنود بين [أقواس] تحتاج إلى قرار.', ribbon: 'مسودة — لم يراجعها محامٍ بعد.', terms: 'شروط الشراء', licence: 'الترخيص الرقمي', shipping: 'الشحن والاسترداد', privacy: 'الخصوصية' } : { title: 'Terms, licence & privacy', sub: 'Draft for review before launch. Items in [brackets] need a decision.', ribbon: 'DRAFT — not yet checked by a lawyer.', terms: 'Purchase terms', licence: 'Digital licence', shipping: 'Shipping & refunds', privacy: 'Privacy' };
+  document.getElementById('l-title').textContent = H.title; document.getElementById('l-sub').textContent = H.sub; document.getElementById('l-ribbon').textContent = H.ribbon;
+  const FALLBACK = ar ? { terms: 'الأسعار بالدينار الكويتي وتشمل كل شيء عدا التوصيل الذي يظهر قبل الدفع. تتم معالجة الدفع عبر UPayments (كي-نت والبطاقات والمحافظ)؛ ولا تطّلع تواصل على بيانات بطاقتك. يُعتمد الطلب فقط بعد أن تؤكد UPayments لنا إتمام الدفع. [للقرار: اسم الشركة وبيانات التسجيل.]', licence: 'الكتب الإلكترونية والصوتية مرخّصة لك شخصياً للاستخدام الخاص غير التجاري، وتُعرض ضمن مكتبتك في تواصل على عدد محدود من الأجهزة. يتطلب نسخ النسخة الرقمية أو مشاركتها أو إعادة توزيعها موافقة خطية من تواصل. تحمل الصفحات والتنزيلات اسمك ورقم طلبك. [للقرار: السماح بالتنزيل، وحدّ الأجهزة.]', shipping: 'تظهر مناطق التوصيل ورسومه وخيار الاستلام من عيادة تواصل عند الدفع. تُستبدل الطرود المفقودة أو التالفة أو يُردّ ثمنها. يمكن استرداد المشتريات الرقمية خلال [N] يوماً إذا لم يُفتح المحتوى. [للقرار: شركة التوصيل، ومدة الاسترداد، وجهة التواصل.]', privacy: 'نجمع ما يحتاجه الطلب فقط: بريدك الإلكتروني، والاسم، ورقم هاتف اختياري للتوصيل، وعنوان التوصيل للكتب المطبوعة. نحفظ موضع القراءة والاستماع لتكمل من جهاز آخر. لا نبيع بياناتك ولا نشاركها. لا نرسل رسائل تسويقية إلا إذا وافقت. [للقرار: مدة الاحتفاظ بالبيانات وجهة التواصل.]' } : { terms: 'Prices are in Kuwaiti dinar and include everything except delivery, which is shown before payment. Payment is processed by UPayments (KNET, cards and wallets); Tawasol never sees your card details. An order is confirmed only after UPayments confirms the payment to us. [Decide: company name and registration details to show here.]', licence: 'Ebooks and audiobooks are licensed to you personally for private, non-commercial use. They stream to your signed-in Tawasol library on a limited number of devices. Copying, sharing or redistributing a digital edition needs written consent from Tawasol. Pages and downloads carry your name and order number. [Decide: whether downloads are allowed, and the device limit.]', shipping: 'Delivery zones, charges and collection at the Tawasol clinic are listed at checkout. Lost or damaged parcels are replaced or refunded. Digital purchases can be refunded within [N] days if the content has not been opened. [Decide: courier(s), refund window, who to contact.]', privacy: 'We collect only what an order needs: your email (receipt and library access), a name, an optional mobile number for delivery, and a delivery address for printed books. Reading and listening positions are stored so you can continue on another device. We do not sell or share your data; UPayments processes the payment under its own policy. Marketing emails are sent only if you opt in. [Decide: retention period and a contact for data requests.]' };
+  const render = (c) => { document.getElementById('sections').innerHTML = ['terms', 'licence', 'shipping', 'privacy'].map((k) => `<h2 id="${k}" style="font-size:26px">${esc(H[k])}</h2><p style="white-space:pre-line">${esc(c[k] || FALLBACK[k])}</p>`).join(''); if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 80); } };
+  render({});
+  if (C.api) fetch(C.api.replace(/\/$/, '') + '/api/content?keys=legal.terms,legal.licence,legal.shipping,legal.privacy').then((r) => r.json()).then((j) => { const c = {}; for (const r of j.content || []) c[r.key.slice(6)] = (ar && r.ar) || r.en; render(c); }).catch(() => {});
+})();
+</script>
+</body>
+</html>

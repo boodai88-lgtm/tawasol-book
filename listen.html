@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Listen · Tawasol</title><meta name="robots" content="noindex">
+<meta name="theme-color" content="#f3eddf"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="img/icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+</head>
+<body data-page="listen" data-title="listen">
+<header class="nav" id="nav"></header>
+<main id="main" class="pl">
+  <div id="banner"></div>
+  <img class="cover" id="cover" src="img/cover-en.png" alt="">
+  <h1 id="title">Tawasol, The Guidebook</h1><p class="sub" id="sub"></p>
+  <div class="scrub"><input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek"><div class="times"><span id="tCur">0:00</span><span id="tRem">–:––</span></div></div>
+  <div class="controls"><button class="ibtn" id="prev" data-i18n-aria="pl_prev"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/skip-back.svg)"></span></button><button class="ibtn" id="back" data-i18n-aria="pl_back15"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/rotate-ccw.svg)"></span><span class="lbl">15</span></button><button class="ibtn main" id="play" data-i18n-aria="pl_play"><span class="ico" id="playIco" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/play.svg)"></span></button><button class="ibtn" id="fwd" data-i18n-aria="pl_fwd30"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/rotate-cw.svg)"></span><span class="lbl">30</span></button><button class="ibtn" id="next" data-i18n-aria="pl_next"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/skip-forward.svg)"></span></button></div>
+  <div class="pl-row"><button class="chip" id="spd">1×</button><button class="chip" id="slp"><span data-i18n="pl_sleep">Sleep timer</span>: <span id="slpVal" data-i18n="pl_off">Off</span></button><button class="chip" id="bm" data-i18n="pl_bookmark">Bookmark</button></div>
+  <p class="note" id="note" data-i18n="pl_lock">Keeps playing when your screen locks on most phones.</p>
+  <h3 style="font-size:17px;margin:18px 0 6px" id="tocH"></h3><ul class="toc" id="toc"></ul>
+  <h3 style="font-size:17px;margin:22px 0 6px" id="bmH" hidden data-i18n="pl_bookmarks">Bookmarks</h3><ul class="toc" id="bms"></ul>
+  <audio id="audio" preload="metadata" playsinline></audio>
+</main>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><h3 id="sheetT"></h3><div class="opts" id="sheetO"></div></div>
+<footer id="footer"></footer>
+<script>
+(async () => {
+  const { t, lang, pick, mmss, api, live, esc, toast, token, ICON, FALLBACK, $, $$ } = TW, P = new URLSearchParams(location.search), eid = P.get('e') || 'audiobook-en', sample = P.get('sample') === '1';
+  const audio = $('#audio'), toc = $('#toc'), seek = $('#seek'), sheet = $('#sheet'); let man = null, chapters = [], ci = 0, rate = +(localStorage.getItem('tw_rate') || 1), sleepAt = 0, sleepEoc = false, dirty = false, lastSave = 0, refreshing = false, seeking = false, pendingPos = 0;
+  const icon = (el, n) => el.style.setProperty('--i', `url(${ICON(n)})`);
+  const title = () => chapters[ci] ? pick(chapters[ci], 'title') : '';
+  /* ---------- manifest ---------- */
+  const load = async () => { if (!live) { man = { edition: FALLBACK.editions.find((e) => e.id === eid) || FALLBACK.editions[2], sample: true, chapters: FALLBACK.chapters_en.map((c, i) => ({ idx: i + 1, title_en: c, title_ar: FALLBACK.chapters_ar[i], available: false, is_sample: i === 0 || i === 2 })).filter((c) => !sample || c.is_sample), bookmarks: [] }; } else man = await api(`/api/editions/${encodeURIComponent(eid)}/manifest${sample ? '?sample=1' : ''}`, { auth: !sample }); chapters = man.chapters; return man; };
+  const paintToc = () => { $('#tocH').textContent = sample ? t('pl_samples') : t('rd_contents'); toc.innerHTML = chapters.map((c, i) => `<li data-i="${i}" class="${i === ci ? 'on' : ''} ${c.available ? '' : 'off'}"><i>${String(c.idx).padStart(2, '0')}</i><span>${esc(pick(c, 'title'))}</span><span class="dur">${c.duration_sec ? mmss(c.duration_sec) : c.available ? '' : t('not_ready')}</span></li>`).join(''); };
+  const paintBms = () => { const b = man.bookmarks || []; $('#bmH').hidden = !b.length; $('#bms').innerHTML = b.map((x) => `<li data-bi="${x.chapter_idx}" data-bp="${x.position_sec || 0}"><i>${mmss(x.position_sec)}</i><span>${esc((chapters.find((c) => c.idx === x.chapter_idx) || {}).title_en || '')}</span><button class="ibtn" data-del="${x.id}" aria-label="${t('remove')}"><span class="ico" style="--i:url(${ICON('x')})"></span></button></li>`).join(''); };
+  /* ---------- playback ---------- */
+  const paintTimes = () => { const d = isFinite(audio.duration) ? audio.duration : (chapters[ci] && chapters[ci].duration_sec) || 0, c = audio.currentTime || 0; $('#tCur').textContent = mmss(c); $('#tRem').textContent = d ? '−' + mmss(d - c) + ' ' + t('pl_remaining') : '–:––'; if (!seeking) seek.value = d ? Math.round((c / d) * 1000) : 0; if ('mediaSession' in navigator && d) try { navigator.mediaSession.setPositionState({ duration: d, playbackRate: audio.playbackRate, position: Math.min(c, d) }); } catch (_) {} };
+  const setChapter = async (i, pos = 0, autoplay = false) => {
+    if (!chapters[i]) return; ci = i; const c = chapters[i]; $('#sub').textContent = t('pl_chapter', { n: c.idx, m: man.total_chapters || chapters.length }) + ' · ' + title(); paintToc();
+    if (!c.available || !c.url) { audio.removeAttribute('src'); audio.load(); $('#note').textContent = t('pl_not_ready'); paintTimes(); return; }
+    if (man.expires_at && man.expires_at - Date.now() / 1000 < 120 && !refreshing) { refreshing = true; try { await load(); } finally { refreshing = false; } }
+    audio.src = chapters[ci].url; audio.playbackRate = rate; pendingPos = pos; audio.load();
+    audio.addEventListener('loadedmetadata', () => { if (pendingPos) { audio.currentTime = Math.min(pendingPos, audio.duration - 1); pendingPos = 0; } paintTimes(); }, { once: true });
+    if (autoplay) play();
+    if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: title(), artist: 'Dr. Bibi Alamiri', album: pick(man.edition, 'title'), artwork: [{ src: new URL(man.edition.cover || 'img/cover-en.png', location.href).href, sizes: '512x512', type: 'image/png' }] });
+  };
+  const play = async () => { try { await audio.play(); } catch (e) { if (e.name !== 'AbortError') toast(e.message, 'err'); } };
+  const toggle = () => { if (!audio.src) return; audio.paused ? play() : audio.pause(); };
+  const next = (auto) => { const n = chapters.findIndex((c, i) => i > ci && c.available); if (n >= 0) setChapter(n, 0, auto || !audio.paused); else if (auto) { icon($('#playIco'), 'play'); if (sample) toast(t('pl_sample_only')); } };
+  audio.addEventListener('timeupdate', () => { paintTimes(); dirty = true; if (Date.now() - lastSave > 15000) save(false); if (sleepAt && Date.now() > sleepAt) { audio.pause(); sleepAt = 0; $('#slpVal').textContent = t('pl_off'); } });
+  audio.addEventListener('play', () => { icon($('#playIco'), 'pause'); $('#play').setAttribute('aria-label', t('pl_pause')); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
+  audio.addEventListener('pause', () => { icon($('#playIco'), 'play'); $('#play').setAttribute('aria-label', t('pl_play')); save(false); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; });
+  audio.addEventListener('ended', () => { save(true); if (sleepEoc) { sleepEoc = false; $('#slpVal').textContent = t('pl_off'); return; } next(true); });
+  audio.addEventListener('error', async () => { if (refreshing || !live) return; refreshing = true; const pos = audio.currentTime || pendingPos, wasPlaying = !audio.paused; $('#note').textContent = t('pl_reconnect'); try { await load(); await setChapter(ci, pos, wasPlaying); toast(t('pl_refreshed')); $('#note').textContent = t('pl_lock'); } catch (_) { setTimeout(() => { refreshing = false; audio.dispatchEvent(new Event('error')); }, 5000); return; } refreshing = false; });
+  let stallT; audio.addEventListener('waiting', () => { clearTimeout(stallT); stallT = setTimeout(() => { if (!navigator.onLine) $('#note').textContent = t('pl_reconnect'); }, 6000); }); audio.addEventListener('playing', () => { clearTimeout(stallT); $('#note').textContent = sample ? t('pl_sample_only') : t('pl_lock'); });
+  addEventListener('online', () => { if (audio.src && audio.error) audio.dispatchEvent(new Event('error')); });
+  /* ---------- progress ---------- */
+  const save = (beacon) => { if (!chapters[ci]) return; localStorage.setItem('tw_last_listen', JSON.stringify({ edition: eid, title: title(), position: audio.currentTime || 0, at: Date.now() })); if (sample || !live || !dirty) return; dirty = false; lastSave = Date.now(); const body = { edition_id: eid, chapter_idx: chapters[ci].idx, position_sec: Math.floor(audio.currentTime || 0), percent: null, client_time: new Date().toISOString() }; if (beacon) fetch(TW.C.api + '/api/progress', { method: 'PUT', keepalive: true, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token() }, body: JSON.stringify(body) }).catch(() => {}); else api('/api/progress', { method: 'PUT', body }).catch(() => {}); };
+  addEventListener('pagehide', () => save(true)); document.addEventListener('visibilitychange', () => { if (document.hidden) save(true); });
+  /* ---------- controls ---------- */
+  $('#play').addEventListener('click', toggle); $('#back').addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 15); }); $('#fwd').addEventListener('click', () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 30); });
+  $('#prev').addEventListener('click', () => { if (audio.currentTime > 5) audio.currentTime = 0; else { const p = [...chapters.keys()].reverse().find((i) => i < ci && chapters[i].available); if (p !== undefined) setChapter(p, 0, !audio.paused); } }); $('#next').addEventListener('click', () => next(false));
+  seek.addEventListener('input', () => { seeking = true; const d = audio.duration || 0; $('#tCur').textContent = mmss((seek.value / 1000) * d); }); seek.addEventListener('change', () => { const d = audio.duration || 0; audio.currentTime = (seek.value / 1000) * d; seeking = false; });
+  toc.addEventListener('click', (e) => { const li = e.target.closest('li'); if (li && !li.classList.contains('off')) setChapter(+li.dataset.i, 0, true); });
+  const openSheet = (titleTxt, opts, cur, onPick) => { $('#sheetT').textContent = titleTxt; $('#sheetO').innerHTML = opts.map((o) => `<button class="chip ${o.v === cur ? 'on' : ''}" data-v="${o.v}">${o.l}</button>`).join(''); sheet.classList.add('open'); $$('#sheetO .chip').forEach((b) => b.addEventListener('click', () => { onPick(b.dataset.v); sheet.classList.remove('open'); })); const close = (e) => { if (!sheet.contains(e.target)) { sheet.classList.remove('open'); document.removeEventListener('click', close, true); } }; setTimeout(() => document.addEventListener('click', close, true), 0); };
+  $('#spd').textContent = rate + '×'; $('#spd').addEventListener('click', () => openSheet(t('pl_speed'), [0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2].map((v) => ({ v, l: v + '×' })), rate, (v) => { rate = +v; audio.playbackRate = rate; localStorage.setItem('tw_rate', rate); $('#spd').textContent = rate + '×'; }));
+  $('#slp').addEventListener('click', () => openSheet(t('pl_sleep'), [{ v: '0', l: t('pl_off') }, ...[15, 30, 45, 60].map((m) => ({ v: String(m), l: t('pl_min', { n: m }) })), { v: 'eoc', l: t('pl_eoc') }], sleepEoc ? 'eoc' : String(sleepAt ? Math.round((sleepAt - Date.now()) / 60000) : 0), (v) => { sleepEoc = v === 'eoc'; sleepAt = v !== 'eoc' && +v ? Date.now() + v * 60000 : 0; $('#slpVal').textContent = v === '0' ? t('pl_off') : v === 'eoc' ? t('pl_eoc') : t('pl_min', { n: v }); if (v !== '0') toast(t('pl_sleep_set')); }));
+  $('#bm').addEventListener('click', async () => { if (sample || !live) return toast(t('pl_sample_only')); try { const r = await api('/api/bookmarks', { method: 'POST', body: { edition_id: eid, chapter_idx: chapters[ci].idx, position_sec: Math.floor(audio.currentTime) } }); man.bookmarks.unshift({ id: r.id, chapter_idx: chapters[ci].idx, position_sec: Math.floor(audio.currentTime) }); paintBms(); toast('✓ ' + mmss(audio.currentTime)); } catch (e) { toast(e.message, 'err'); } });
+  $('#bms').addEventListener('click', async (e) => { const d = e.target.closest('[data-del]'); if (d) { await api('/api/bookmarks/' + d.dataset.del, { method: 'DELETE' }); man.bookmarks = man.bookmarks.filter((b) => b.id !== +d.dataset.del); return paintBms(); } const li = e.target.closest('li[data-bi]'); if (li) { const i = chapters.findIndex((c) => c.idx === +li.dataset.bi); if (i >= 0) setChapter(i, +li.dataset.bp, true); } });
+  if ('mediaSession' in navigator) { const ms = navigator.mediaSession; ms.setActionHandler('play', play); ms.setActionHandler('pause', () => audio.pause()); ms.setActionHandler('seekbackward', () => { audio.currentTime = Math.max(0, audio.currentTime - 15); }); ms.setActionHandler('seekforward', () => { audio.currentTime += 30; }); ms.setActionHandler('previoustrack', () => $('#prev').click()); ms.setActionHandler('nexttrack', () => next(false)); try { ms.setActionHandler('seekto', (d) => { audio.currentTime = d.seekTime; }); } catch (_) {} }
+  document.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); toggle(); } if (e.key === 'ArrowLeft') $('#back').click(); if (e.key === 'ArrowRight') $('#fwd').click(); });
+  /* ---------- boot ---------- */
+  try {
+    await load(); $('#title').textContent = pick(man.edition, 'title'); $('#cover').src = man.edition.cover || 'img/cover-en.png';
+    if (sample) $('#banner').innerHTML = `<p class="ribbon">${t('pl_samples')} · <a href="checkout.html?add=audiobook">${t('pl_buy')}</a></p>`;
+    if (!live) $('#banner').insertAdjacentHTML('beforeend', `<p class="ribbon">${t('preview_mode')} · ${t('pl_not_ready')}</p>`);
+    paintBms(); const pr = man.progress, start = pr && pr.chapter_idx ? Math.max(0, chapters.findIndex((c) => c.idx === pr.chapter_idx)) : chapters.findIndex((c) => c.available);
+    await setChapter(start >= 0 ? start : 0, pr && pr.position_sec ? pr.position_sec : 0, false);
+  } catch (e) { if (e.status === 401 || e.code === 'signin') location.href = 'library.html'; else $('#banner').innerHTML = `<div class="status-card"><p>${esc(e.message)}</p>${e.code === 'not_owned' ? `<a class="btn btn-primary" href="checkout.html?add=audiobook">${t('pl_buy')}</a>` : `<button class="btn btn-outline" onclick="location.reload()">${t('retry')}</button>`}</div>`; }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Tawasol hub — PREVIEW package (no payments, no sign-in; sample data only)
+
+1. Open github.com/boodai88-lgtm/tawasol-book → "Add file" → "Upload files".
+2. Drag EVERYTHING inside this folder (not the folder itself) into the upload box.
+   If asked to replace existing files (index.html, site.css…), say yes — this replaces the old demo.
+   To keep the old demo too, first create a folder named  hub  and upload inside it; the link then ends with /hub/.
+3. Commit. Wait ~1 minute. Open: https://boodai88-lgtm.github.io/tawasol-book/
+
+What Dr. Bibi can see: the store, product details, checkout layout, the free sample pages of the reader and the first sample chapters of the player, the library and help pages in English and Arabic (language switch in the menu), and the admin preview at /admin/.
+What does not work yet: paying, receiving a code by email, the full book or full audiobook — those need the backend (api folder) and UPayments, which are not part of this package.

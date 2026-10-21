@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My library · Tawasol</title><meta name="robots" content="noindex">
+<meta name="theme-color" content="#f3eddf"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="img/icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+</head>
+<body data-page="library" data-title="lib_title">
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap" style="max-width:760px">
+  <div class="page-head"><h1 data-i18n="lib_title">My library</h1><p id="who"></p></div>
+  <div id="view" aria-live="polite"></div>
+</main>
+<footer id="footer"></footer>
+<script>
+(async () => {
+  const { t, lang, pick, fmt, fmtDate, mmss, api, live, esc, toast, token, setToken, deviceId, deviceName, install, isIOS, standalone, ICON, FALLBACK, $, $$ } = TW, view = $('#view'), P = new URLSearchParams(location.search);
+  let email = P.get('e') || localStorage.getItem('tw_last_email') || '', me = null, lib = null, preview = false, tab = 'library';
+  const ico = (n) => `<span class="ico" style="--i:url(${ICON(n)})"></span>`;
+  /* ---------- sign-in ---------- */
+  const signin = (msg = '') => { $('#who').textContent = ''; view.innerHTML = `<div class="section-card" style="max-width:460px"><h3>${t('lib_signin')}</h3><p style="color:var(--ink-500);font-size:14.5px;margin:0 0 14px">${t('lib_signin_p')}</p><form id="f1" novalidate><div class="field"><label for="em">${t('f_email')}</label><input class="input" id="em" type="email" inputmode="email" autocomplete="email" required value="${esc(email)}"></div><p class="err" id="e1">${esc(msg)}</p><button class="btn btn-primary btn-block" type="submit">${t('send_code')}</button></form>${live ? '' : `<p class="ribbon" style="margin-top:16px">${ico('info')}<span>${t('preview_api')}</span></p><button class="btn btn-outline btn-block" id="pv">${t('preview_lib')}</button>`}</div>`;
+    $('#f1').addEventListener('submit', async (e) => { e.preventDefault(); email = $('#em').value.trim().toLowerCase(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return $('#e1').textContent = t('f_email_help'); const b = e.target.querySelector('button'); b.disabled = true; try { const r = await api('/api/auth/start', { method: 'POST', body: { email, lang }, auth: false }); localStorage.setItem('tw_last_email', email); code(r.dev_code); } catch (err) { $('#e1').textContent = err.code === 'no_api' ? t('preview_api') : err.message; b.disabled = false; } });
+    const pv = $('#pv'); if (pv) pv.addEventListener('click', () => { preview = true; me = { email: email || 'reader@example.com', devices: [{ id: 'x', device_name: deviceName(), current: true, last_seen_at: new Date().toISOString() }], orders: [{ id: 'TW-PREVIEW', status: 'paid', total_fils: 25000, created_at: new Date().toISOString(), needs_shipping: 0, fulfilment: 'none' }], max_devices: 3 }; lib = { items: FALLBACK.editions.map((e) => ({ ...e, has_file: 0, ready_chapters: 0, chapters: 9, percent: e.id === 'ebook-en' ? 28 : null, locator: e.id === 'ebook-en' ? 'page:12' : null })) }; library(); }); };
+  const code = (devCode) => { view.innerHTML = `<div class="section-card" style="max-width:460px"><h3>${t('code_title')}</h3><p style="color:var(--ink-500);font-size:14px;margin:0 0 14px">${t('code_sent', { e: esc(email) })}</p>${devCode ? `<p class="ribbon">${ico('flask-conical')}<span>Staging code: <b>${devCode}</b></span></p>` : ''}<form id="f2" novalidate><div class="field"><input class="input code-input" id="cd" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" aria-label="${t('code_title')}" autofocus></div><p class="err" id="e2"></p><button class="btn btn-primary btn-block" type="submit">${t('signin')}</button></form><div style="display:flex;gap:14px;justify-content:center;margin-top:14px;font-size:14px"><a href="#" id="rs">${t('resend')}</a><a href="#" id="oe">${t('other_email')}</a></div></div>`;
+    $('#cd').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); if (e.target.value.length === 6) $('#f2').requestSubmit(); });
+    $('#f2').addEventListener('submit', (e) => { e.preventDefault(); verify({ code: $('#cd').value }); });
+    $('#rs').addEventListener('click', async (e) => { e.preventDefault(); try { const r = await api('/api/auth/start', { method: 'POST', body: { email, lang }, auth: false }); toast(t('code_sent', { e: email })); if (r.dev_code) code(r.dev_code); } catch (err) { $('#e2').textContent = err.message; } });
+    $('#oe').addEventListener('click', (e) => { e.preventDefault(); signin(); });
+  };
+  const verify = async (cred) => { try { const r = await api('/api/auth/verify', { method: 'POST', body: { email, ...cred, lang, device: { id: deviceId, name: deviceName() } }, auth: false }); setToken(r.token); localStorage.setItem('tw_email', email); history.replaceState(null, '', 'library.html'); me = r.me; if (r.over_limit) return overLimit(); await load(); } catch (err) { const el = $('#e2'); if (el) el.textContent = err.code === 'expired' ? t('code_expired') : err.code === 'wrong' ? t('code_wrong') : err.message; else signin(err.message); } };
+  const overLimit = () => { $('#who').textContent = me.email; view.innerHTML = `<div class="section-card"><h3>${t('limit_title')}</h3><p style="color:var(--ink-500);font-size:14.5px">${t('limit_p', { n: me.max_devices })}</p>${devicesHtml(true)}</div>`; bindDevices(() => me.over_limit ? overLimit() : load()); };
+  /* ---------- library ---------- */
+  const load = async () => { try { [me, lib] = await Promise.all([api('/api/me'), api('/api/library')]); library(); } catch (err) { if (err.code === 'device_limit') { me = await api('/api/me'); return overLimit(); } if (err.status === 401 || err.code === 'no_api') return signin(); view.innerHTML = `<div class="status-card"><p>${esc(err.message)}</p><button class="btn btn-outline" onclick="location.reload()">${t('retry')}</button></div>`; } };
+  const kindLabel = (e) => `${t(e.kind)} · ${t('lang_' + e.lang)}${e.kind === 'audiobook' ? ' · ' + t('narrated') : ''}`;
+  const itemHtml = (e) => { const ready = e.kind === 'audiobook' ? e.ready_chapters > 0 : !!e.has_file, started = e.percent > 0 || e.position_sec > 0 || e.chapter_idx > 0, href = (e.kind === 'audiobook' ? 'listen.html' : 'read.html') + '?e=' + e.id; return `<div class="lib-card"><img src="${esc(e.cover || 'img/cover-en.png')}" alt=""><div><h3>${esc(pick(e, 'title'))}</h3><p class="sub">${kindLabel(e)}</p>${e.percent ? `<div class="prog" role="progressbar" aria-valuenow="${Math.round(e.percent)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${Math.min(100, e.percent)}%"></i></div>` : ''}<div class="acts">${ready || preview ? `<a class="btn btn-primary btn-sm" href="${href}">${started ? t('cont') : e.kind === 'audiobook' ? t('listen') : t('read')}</a>` : `<span class="badge warn">${t('not_ready')}</span>`}</div>${!ready && !preview ? `<p class="sub" style="margin:8px 0 0">${t('not_ready_p')}</p>` : ''}</div></div>`; };
+  const stBadge = (o) => { const map = { pending: 'warn', paid: '', failed: 'bad', cancelled: 'bad', expired: 'muted', refunded: 'muted', partially_refunded: 'muted' }; return `<span class="badge ${map[o.status] || ''}">${t('st_' + (['failed', 'cancelled'].includes(o.status) ? 'failed' : o.status))}</span>`; };
+  const devicesHtml = (removable) => me.devices.map((d) => `<div class="dev">${ico(/iPhone|Android|iPad/.test(d.device_name || '') ? 'smartphone' : 'laptop')}<div class="nm"><b>${esc(d.device_name || 'Device')} ${d.current ? `<span class="badge muted">${t('this_device')}</span>` : ''}</b><small>${t('last_seen')}: ${fmtDate(d.last_seen_at || d.created_at)}</small></div>${removable && !d.current || (!removable && !d.current) ? `<button class="btn btn-outline btn-sm" data-rm="${d.id}">${t('remove_device')}</button>` : ''}</div>`).join('');
+  const bindDevices = (after) => $$('[data-rm]').forEach((b) => b.addEventListener('click', async () => { b.disabled = true; try { me = await api('/api/me/devices/' + b.dataset.rm, { method: 'DELETE' }); after(); } catch (e) { toast(e.message, 'err'); b.disabled = false; } }));
+  const library = () => {
+    $('#who').textContent = me.email;
+    const inst = !standalone && (isIOS || true) ? `<div class="section-card" style="margin-top:18px"><h3 style="font-size:17px">${t('install_t')}</h3><p style="color:var(--ink-500);font-size:14px;margin:0 0 10px">${t('install_p')}</p>${isIOS ? `<p style="font-size:14px;margin:0">${t('install_ios')}</p>` : `<button class="btn btn-outline btn-sm" data-install hidden>${t('install_btn')}</button>`}</div>` : '';
+    view.innerHTML = `${preview ? `<p class="ribbon">${ico('info')}<span>${t('preview_note')}</span></p>` : ''}<div class="tabs" role="tablist"><button role="tab" data-tab="library" class="${tab === 'library' ? 'on' : ''}">${t('lib_title')}</button><button role="tab" data-tab="orders" class="${tab === 'orders' ? 'on' : ''}">${t('orders')}</button><button role="tab" data-tab="devices" class="${tab === 'devices' ? 'on' : ''}">${t('devices')}</button></div><div id="pane"></div>${inst}<p style="display:flex;gap:16px;justify-content:center;margin:26px 0 0;font-size:14px"><a href="mailto:${TW.C.supportEmail}">${t('support')}</a><a href="#" id="so">${t('signout')}</a></p>`;
+    const pane = $('#pane');
+    if (tab === 'library') pane.innerHTML = lib.items.length ? `<div class="lib-grid">${lib.items.map(itemHtml).join('')}</div>` : `<div class="status-card"><p class="big">${t('lib_empty')}</p><p>${t('lib_empty_p', { e: esc(me.email) })}</p><p style="font-size:13.5px">${t('lib_empty_help')}</p><a class="btn btn-primary" href="index.html#formats" style="margin-top:10px">${t('browse')}</a></div>`;
+    if (tab === 'orders') pane.innerHTML = me.orders.length ? me.orders.map((o) => `<div class="line"><div class="nm"><b>${esc(o.id)} ${stBadge(o)}</b><small>${fmtDate(o.created_at)} · ${fmt(o.total_fils)}${o.needs_shipping && o.status === 'paid' ? ' · ' + t('fu_' + (o.fulfilment === 'none' ? 'pending' : o.fulfilment)) + (o.tracking ? ` · ${t('tracking')} ${esc(o.tracking)}` : '') : ''}</small></div>${o.public_key ? `<a class="btn btn-outline btn-sm" href="return.html?o=${encodeURIComponent(o.id)}&k=${encodeURIComponent(o.public_key)}">${o.status === 'pending' ? t('pay_now') : t('receipt')}</a>` : ''}</div>`).join('') : `<div class="status-card"><p>${t('lib_empty')}</p></div>`;
+    if (tab === 'devices') { pane.innerHTML = `<div class="section-card">${devicesHtml(false)}</div>`; bindDevices(library); }
+    $$('[data-tab]').forEach((b) => b.addEventListener('click', () => { tab = b.dataset.tab; library(); }));
+    const ib = $('[data-install]'); if (ib) ib.addEventListener('click', install);
+    $('#so').addEventListener('click', async (e) => { e.preventDefault(); try { if (!preview) await api('/api/auth/signout', { method: 'POST' }); } catch (_) {} setToken(''); preview = false; signin(); });
+  };
+  /* ---------- boot ---------- */
+  if (P.get('t') && P.get('e')) { email = P.get('e'); await verify({ token: P.get('t') }); }
+  else if (token()) await load(); else signin();
+})();
+</script>
+</body>
+</html>

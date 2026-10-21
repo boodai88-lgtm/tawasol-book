@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Help · Tawasol</title>
+<meta name="theme-color" content="#f3eddf"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+<style>.faq details{border-bottom:1px solid var(--line,#e4dcc7);padding:14px 0}.faq summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none;display:flex;justify-content:space-between;gap:12px}.faq summary::after{content:"+";color:#8b857a;font-weight:400;flex:none}.faq details[open] summary::after{content:"−"}.faq details p{margin:10px 0 0;color:#4a463f;white-space:pre-line}.help-cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));margin:22px 0}.help-cards a{display:block;background:#fffdf8;border-radius:14px;padding:16px 18px;text-decoration:none;color:inherit;box-shadow:0 1px 2px rgba(43,41,38,.05)}.help-cards a b{display:block;margin-bottom:4px}.help-cards a span{color:#6b665c;font-size:14px}</style>
+</head>
+<body data-page="help">
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap" style="max-width:720px;font-size:15.5px;line-height:1.65">
+  <div class="page-head"><h1 id="h-title">Help</h1><p id="h-sub">Answers to the usual questions, and how to reach us.</p></div>
+  <div class="help-cards" id="cards"></div>
+  <div class="faq" id="faq"><p class="muted">…</p></div>
+  <p id="h-contact" style="margin-top:28px;background:#edecd9;border-radius:14px;padding:16px 18px"></p>
+</main>
+<footer id="footer"></footer>
+<script>
+(function () {
+  const C = window.TAWASOL_CONFIG || {}, ar = document.documentElement.lang === 'ar', esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const T = ar ? { title: 'المساعدة', sub: 'إجابات عن الأسئلة المعتادة، وكيف تصل إلينا.', lib: ['مكتبتي', 'افتح كتبك، وأكمل من حيث توقفت، وأدر أجهزتك.'], order: ['طلباتي', 'حالة الدفع والشحن والإيصالات ضمن مكتبتك.'], legal: ['الشروط والخصوصية', 'الترخيص الرقمي، والشحن والاسترداد، وبياناتك.'], contact: 'لم تجد ما تبحث عنه؟ راسلنا على', recovery: 'إن فقدت الوصول إلى بريدك القديم فاكتب لنا من بريدك الجديد مع رقم الطلب.' } : { title: 'Help', sub: 'Answers to the usual questions, and how to reach us.', lib: ['My Library', 'Open your books, continue where you stopped, manage devices.'], order: ['My orders', 'Payment, shipping status and receipts live in your library.'], legal: ['Terms & privacy', 'Digital licence, shipping and refunds, your data.'], contact: 'Didn’t find it? Write to us at', recovery: 'Lost access to your old email? Write from your new one and include your order number.' };
+  document.getElementById('h-title').textContent = T.title; document.getElementById('h-sub').textContent = T.sub;
+  document.getElementById('cards').innerHTML = [['library.html', T.lib], ['library.html#orders', T.order], ['legal.html', T.legal]].map(([h, [b, s]]) => `<a href="${h}"><b>${esc(b)}</b><span>${esc(s)}</span></a>`).join('');
+  document.getElementById('h-contact').innerHTML = `${esc(T.contact)} <a href="mailto:${esc(C.supportEmail || '')}">${esc(C.supportEmail || '')}</a>.<br><span style="color:#6b665c;font-size:14px">${esc(T.recovery)}</span>`;
+  const FALLBACK = ar ? [['كيف أفتح الكتاب الإلكتروني أو الصوتي بعد الدفع؟', 'ادخل إلى مكتبتي وسجّل الدخول بالبريد نفسه الذي استخدمته عند الشراء. نرسل لك رمزاً لمرة واحدة، دون كلمة مرور.'], ['هل يمكنني استخدام هاتف آخر أو حاسوبي؟', 'نعم. سجّل الدخول على الجهاز الجديد ببريدك، وسيتبعك موضع القراءة والاستماع. يعمل كل حساب على عدد محدود من الأجهزة.'], ['لم أعد أستطيع الوصول إلى البريد الذي اشتريت به.', 'راسلنا من بريدك الجديد مع رقم الطلب أو الاسم المسجّل في الطلب. بعد التأكد من هويتك ننقل مشترياتك إلى البريد الجديد.'], ['هل يوجد كتاب صوتي بالعربية؟', 'ليس بعد. الكتاب الصوتي بالإنجليزية بصوت د. بيبي العميري. الكتاب الإلكتروني متوفر بالعربية والإنجليزية، والكتاب المطبوع ثنائي اللغة.'], ['هل يمكنني تنزيل الملفات؟', 'العرض ضمن مكتبتك متاح دائماً. يُتاح التنزيل فقط عندما تذكر صفحة المنتج ذلك، ويحمل كل ملف اسمك ورقم طلبك.'], ['متى يصل الكتاب المطبوع؟', 'التوصيل داخل الكويت عادة خلال ٣–٥ أيام عمل، ودول الخليج ٥–١٠. يمكنك أيضاً الاستلام من عيادة تواصل.']] : [['How do I open my ebook or audiobook after paying?', 'Go to My Library and sign in with the same email you used at checkout. We send a one-time code — no password needed.'], ['Can I use another phone or my laptop?', 'Yes. Sign in on the new device with your email. Your reading and listening position follows you. Each account works on a limited number of devices.'], ['I no longer have access to the email I bought with.', 'Write to us from your new email with your order number or the name on the order. After we confirm it is you, we move your purchases to the new email.'], ['Is there an Arabic audiobook?', 'Not yet. The audiobook is in English, narrated by Dr. Bibi Alamiri. The ebook is available in both English and Arabic, and the printed book is bilingual.'], ['Can I download the files?', 'Streaming in your library is always available. Downloads are offered only where the product page says so, and each download carries your name and order number.'], ['When will my printed book arrive?', 'Kuwait delivery usually takes 3–5 working days; GCC 5–10. You can also collect from the Tawasol clinic.']];
+  const render = (pairs) => { document.getElementById('faq').innerHTML = pairs.map(([q, a], i) => `<details ${i === 0 ? 'open' : ''}><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join(''); };
+  render(FALLBACK);
+  if (C.api) fetch(C.api.replace(/\/$/, '') + '/api/content').then((r) => r.json()).then((j) => { const rows = (j.content || []).filter((r) => r.key.startsWith('faq.')).sort((a, b) => +a.key.slice(4) - +b.key.slice(4)).map((r) => { const txt = (ar && r.ar) || r.en || ''; const [q, ...rest] = txt.split(/\n\s*\n/); return [q, rest.join('\n\n')]; }).filter((p) => p[0]); if (rows.length) render(rows); }).catch(() => {});
+})();
+</script>
+</body>
+</html>

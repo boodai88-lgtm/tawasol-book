@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your order · Tawasol</title><meta name="robots" content="noindex">
+<meta name="theme-color" content="#f3eddf"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+</head>
+<body data-page="checkout" data-title="co_title">
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap">
+  <div class="page-head"><h1 data-i18n="co_title">Your order</h1></div>
+  <div id="preview" class="ribbon" hidden><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/info.svg)"></span><span data-i18n="pay_preview">Preview — payments are not connected yet</span></div>
+  <div id="empty" class="status-card" hidden><p class="big" data-i18n="co_empty">Nothing here yet.</p><a class="btn btn-primary" href="index.html#formats" data-i18n="browse">Browse formats</a></div>
+  <form id="co" class="grid-2" novalidate hidden>
+    <div>
+      <section class="section-card"><div id="lines"></div><div class="inline" style="margin-top:14px"><input class="input" id="disc" autocomplete="off" autocapitalize="characters" data-i18n-ph="co_discount" placeholder="Discount code"><button class="btn btn-outline" type="button" id="discBtn" data-i18n="apply">Apply</button></div><p class="err" id="discMsg" style="font-size:13px;margin:6px 0 0"></p></section>
+      <section class="section-card" id="shipSec" hidden><h3 data-i18n="co_delivery">Delivery</h3><p class="help" style="margin:-6px 0 12px;color:var(--ink-500);font-size:14px" data-i18n="co_delivery_q">How should we get the printed book to you?</p><div id="zones"></div>
+        <div id="addr"><div class="field"><label for="country" data-i18n="f_country">Country</label><select class="select" id="country" name="country" autocomplete="country"></select></div><div class="field"><label for="line1" data-i18n="f_address">Address</label><input class="input" id="line1" name="line1" autocomplete="address-line1" required></div><div class="field"><label for="line2" data-i18n="f_address2">Apartment, floor (optional)</label><input class="input" id="line2" name="line2" autocomplete="address-line2"></div><div class="field"><label for="city" data-i18n="f_city">City</label><input class="input" id="city" name="city" autocomplete="address-level2" required></div><div class="field"><label for="notes" data-i18n="f_notes">Delivery notes (optional)</label><input class="input" id="notes" name="notes"></div></div></section>
+      <section class="section-card"><h3 data-i18n="co_you">Your details</h3>
+        <div class="field"><label for="email" data-i18n="f_email">Email</label><input class="input" id="email" name="email" type="email" inputmode="email" autocomplete="email" required><span class="help" data-i18n="f_email_help">Your receipt and library access go to this address.</span><span class="err" id="emailErr"></span></div>
+        <div class="row2"><div class="field"><label for="name" data-i18n="f_name">Name</label><input class="input" id="name" name="name" autocomplete="name"></div><div class="field"><label for="phone" data-i18n="f_phone">Mobile (optional)</label><input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="+965"><span class="help" data-i18n="f_phone_help">With country code, e.g. +965…</span></div></div>
+        <label class="check"><input type="checkbox" id="mkt" name="mkt"><span><span data-i18n="f_marketing">Occasionally email me about Tawasol workshops and new resources</span><span class="help" data-i18n="f_marketing_help">Separate from order emails. You can stop any time.</span></span></label></section>
+    </div>
+    <aside>
+      <div class="summary" aria-live="polite"><div class="ln"><span data-i18n="subtotal">Subtotal</span><span id="sSub">—</span></div><div class="ln" id="sDiscRow" hidden><span data-i18n="discount">Discount</span><span id="sDisc"></span></div><div class="ln" id="sShipRow" hidden><span data-i18n="delivery">Delivery</span><span id="sShip"></span></div><div class="ln total"><span><span data-i18n="total">Final total</span><small data-i18n="total_help">KWD · no hidden fees</small></span><span id="sTotal">—</span></div><p class="help" id="sNote" style="font-size:13px;color:var(--ink-500);margin:12px 0 0"></p></div>
+      <div class="sticky-pay"><button class="btn btn-primary" type="submit" id="payBtn"><span data-i18n="pay">Continue to secure payment</span></button><p class="err" id="payErr" style="text-align:center;font-size:13px;margin:8px 0 0"></p><div class="pay-methods" id="methods"><span>KNET</span><span>Visa</span><span>Mastercard</span><span>Apple Pay</span></div><p class="legal"><span data-i18n="pay_via">Secure payment by UPayments, Kuwait</span><br><span data-i18n="pay_legal">By paying you accept the purchase terms and the personal-use licence.</span></p></div>
+    </aside>
+  </form>
+</main>
+<footer id="footer"></footer>
+<script>
+(async () => {
+  const { t, lang, pick, fmt, cart, catalog, api, live, esc, toast, $, $$ } = TW, cat = await catalog();
+  const add = new URLSearchParams(location.search).get('add'); if (add && cat.products.some((p) => p.id === add)) { cart.add(add); history.replaceState(null, '', 'checkout.html'); }
+  const COUNTRIES = [['KW', 'Kuwait', 'الكويت'], ['SA', 'Saudi Arabia', 'السعودية'], ['AE', 'United Arab Emirates', 'الإمارات'], ['QA', 'Qatar', 'قطر'], ['BH', 'Bahrain', 'البحرين'], ['OM', 'Oman', 'عُمان'], ['JO', 'Jordan', 'الأردن'], ['EG', 'Egypt', 'مصر'], ['GB', 'United Kingdom', 'المملكة المتحدة'], ['US', 'United States', 'الولايات المتحدة'], ['ZZ', 'Other', 'دولة أخرى']];
+  const st = { zone: localStorage.getItem('tw_zone') || 'kw', country: 'KW', disc: cart.get().discount_code || '', quote: null, busy: false };
+  $('#country').innerHTML = COUNTRIES.map(([c, en, ar]) => `<option value="${c}">${lang === 'ar' ? ar : en}</option>`).join(''); $('#country').value = st.country;
+  $('#email').value = localStorage.getItem('tw_last_email') || ''; $('#preview').hidden = live; $('#payBtn').disabled = !live; if (!live) $('#payBtn span').textContent = t('pay_preview');
+  const products = () => Object.entries(cart.get().items).map(([id, qty]) => ({ p: cat.products.find((x) => x.id === id), qty })).filter((x) => x.p);
+  const ships = () => products().some((x) => x.p.ships), digital = () => products().some((x) => x.p.grants && x.p.grants.length);
+  const localQuote = () => { const items = products().map(({ p, qty }) => ({ product_id: p.id, qty: p.kind === 'physical' ? qty : 1, line_fils: p.price_fils * (p.kind === 'physical' ? qty : 1) })), sub = items.reduce((a, i) => a + i.line_fils, 0), z = cat.shipping_zones.find((x) => x.id === st.zone), sh = ships() && z ? z.fee_fils : 0; return { items, subtotal_fils: sub, discount_fils: 0, shipping_fils: sh, total_fils: sub + sh, needs_shipping: ships(), zone: z, problems: [] }; };
+  let timer; const requote = () => { clearTimeout(timer); timer = setTimeout(async () => { if (!live) { st.quote = localQuote(); return paintSummary(); } try { st.quote = await api('/api/quote', { method: 'POST', body: { items: products().map(({ p, qty }) => ({ product_id: p.id, qty })), discount_code: st.disc, shipping_zone: st.zone, address: { country: st.country } }, auth: false }); } catch (e) { st.quote = localQuote(); if (e.status === 409 && e.code === 'stock') toast(e.message, 'err'); } paintSummary(); }, 250); };
+  const paintSummary = () => { const q = st.quote; if (!q) return; $('#sSub').textContent = fmt(q.subtotal_fils); $('#sDiscRow').hidden = !q.discount_fils; $('#sDisc').textContent = '− ' + fmt(q.discount_fils); $('#sShipRow').hidden = !q.needs_shipping; $('#sShip').textContent = q.shipping_fils ? fmt(q.shipping_fils) : t('pickup_free'); $('#sTotal').textContent = fmt(q.total_fils); $('#sNote').textContent = digital() ? (ships() ? t('co_mixed_note') : t('co_digital_note')) : ''; const d = (q.problems || []).find((p) => p.field === 'discount_code'); $('#discMsg').textContent = st.disc ? (d ? t({ invalid: 'disc_invalid', expired: 'disc_expired', exhausted: 'disc_exhausted', min_subtotal: 'disc_min', not_applicable: 'disc_na' }[d.code] || 'disc_invalid') : t('disc_applied') + ' · ' + q.discount_code) : ''; $('#discMsg').style.color = d ? '#8a3b2e' : 'var(--sage-700,#6f7a52)'; };
+  const paint = () => {
+    const list = products(); $('#empty').hidden = !!list.length; $('#co').hidden = !list.length; if (!list.length) return;
+    $('#lines').innerHTML = list.map(({ p, qty }) => `<div class="line"><div class="nm"><b>${esc(pick(p, 'name'))}</b><small>${fmt(p.price_fils)}${p.kind === 'physical' ? '' : ''}</small></div>${p.kind === 'physical' ? `<div class="qty" aria-label="${t('qty')}"><button type="button" data-q="${p.id}" data-d="-1" aria-label="−">−</button><b>${qty}</b><button type="button" data-q="${p.id}" data-d="1" aria-label="+">+</button></div>` : ''}<span class="amt">${fmt(p.price_fils * (p.kind === 'physical' ? qty : 1))}</span><button class="ibtn" type="button" data-rm="${p.id}" aria-label="${t('remove')}"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/x.svg)"></span></button></div>`).join('');
+    $('#shipSec').hidden = !ships(); if (ships()) paintZones(); requote();
+  };
+  const paintZones = () => { const zs = cat.shipping_zones.filter((z) => z.countries.includes('*') || z.countries.includes(st.country)); if (!zs.some((z) => z.id === st.zone)) st.zone = (zs[0] || {}).id; $('#zones').innerHTML = zs.map((z) => `<label class="zone ${z.id === st.zone ? 'on' : ''}"><input type="radio" name="zone" value="${z.id}" ${z.id === st.zone ? 'checked' : ''}><span class="nm"><b>${esc(pick(z, 'name'))}</b><small>${esc(pick(z, 'eta') || '')}</small></span><span class="amt">${z.fee_fils ? fmt(z.fee_fils) : t('pickup_free')}</span></label>`).join(''); const z = zs.find((x) => x.id === st.zone); $('#addr').hidden = !z || z.kind === 'pickup'; $$('#addr [required]').forEach((i) => { i.required = !$('#addr').hidden; }); };
+  $('#lines').addEventListener('click', (e) => { const q = e.target.closest('[data-q]'), rm = e.target.closest('[data-rm]'); if (q) { cart.setQty(q.dataset.q, (cart.get().items[q.dataset.q] || 1) + +q.dataset.d); paint(); } if (rm) { cart.setQty(rm.dataset.rm, 0); paint(); } });
+  $('#zones').addEventListener('change', (e) => { st.zone = e.target.value; localStorage.setItem('tw_zone', st.zone); paintZones(); requote(); });
+  $('#country').addEventListener('change', (e) => { st.country = e.target.value; paintZones(); requote(); });
+  $('#discBtn').addEventListener('click', () => { st.disc = $('#disc').value.trim().toUpperCase(); const c = cart.get(); c.discount_code = st.disc; cart.set(c); requote(); }); $('#disc').value = st.disc;
+  $('#co').addEventListener('submit', async (e) => {
+    e.preventDefault(); if (st.busy || !live) return; $('#payErr').textContent = ''; $('#emailErr').textContent = '';
+    const email = $('#email').value.trim(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $('#emailErr').textContent = t('f_email_help'); $('#email').classList.add('is-bad'); $('#email').focus(); return; }
+    if (!$('#co').reportValidity()) return;
+    st.busy = true; $('#payBtn').disabled = true; $('#payBtn span').textContent = t('starting_payment');
+    try {
+      const r = await api('/api/orders', { method: 'POST', body: { items: products().map(({ p, qty }) => ({ product_id: p.id, qty })), discount_code: st.disc, shipping_zone: ships() ? st.zone : undefined, address: ships() ? { line1: $('#line1').value, line2: $('#line2').value, city: $('#city').value, country: st.country, notes: $('#notes').value } : undefined, customer: { email, name: $('#name').value, phone: $('#phone').value, lang, marketing_opt_in: $('#mkt').checked } }, auth: false });
+      localStorage.setItem('tw_last_email', email); localStorage.setItem('tw_last_order', JSON.stringify({ id: r.order_id, key: r.key, at: Date.now() })); cart.clear(); location.href = r.link;
+    } catch (err) { st.busy = false; $('#payBtn').disabled = false; $('#payBtn span').textContent = t('pay'); $('#payErr').textContent = err.message || t('err_generic'); if (err.problems) requote(); }
+  });
+  if (live) api('/api/payment-methods', { auth: false }).then((m) => { const names = { knet: 'KNET', cc: 'Visa / Mastercard', 'apple-pay': 'Apple Pay', 'google-pay': 'Google Pay', 'samsung-pay': 'Samsung Pay' }; if (m.methods && m.methods.length) $('#methods').innerHTML = m.methods.map((k) => `<span>${esc(names[k] || k)}</span>`).join(''); }).catch(() => {});
+  paint();
+})();
+</script>
+</body>
+</html>

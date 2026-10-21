@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<title>Read · Tawasol</title><meta name="robots" content="noindex">
+<meta name="theme-color" content="#f3eddf"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="img/icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body data-page="read" data-title="read" class="rd" style="-webkit-user-select:none;user-select:none">
+<div class="rd-bar"><a class="ibtn" href="library.html" data-i18n-aria="rd_back"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/arrow-left.svg)"></span></a><button class="ibtn" id="tocBtn" data-i18n-aria="rd_contents"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/list.svg)"></span></button><div class="sp" id="title"></div><button class="ibtn" id="bmBtn" data-i18n-aria="rd_add_bm"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/bookmark.svg)"></span></button><button class="ibtn" id="zOut" data-i18n-aria="rd_zoom_out"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/zoom-out.svg)"></span></button><button class="ibtn" id="zIn" data-i18n-aria="rd_zoom_in"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/zoom-in.svg)"></span></button></div>
+<div class="wrap" id="banner" style="padding-top:10px"></div>
+<div class="rd-pages" id="pages" aria-live="polite"><p style="color:var(--ink-500)" data-i18n="rd_loading">Loading…</p></div>
+<div class="rd-foot" id="foot" hidden><button class="ibtn" id="prev" data-i18n-aria="rd_prev"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/chevron-left.svg)"></span></button><input type="range" id="slider" min="1" max="1" value="1" aria-label="Page"><span id="pageLbl" style="font-size:13px;min-width:90px;text-align:center;font-variant-numeric:tabular-nums"></span><button class="ibtn" id="next" data-i18n-aria="rd_next"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/chevron-right.svg)"></span></button></div>
+<div class="drawer" id="drawer"><div class="bg"></div><div class="panel"><div class="tabs"><button class="on" data-dt="toc" data-i18n="rd_contents">Contents</button><button data-dt="bm" data-i18n="rd_bookmarks">Bookmarks</button></div><ul class="toc" id="toc"></ul><ul class="toc" id="bms" hidden></ul></div></div>
+<script>
+(async () => {
+  const { t, lang, pick, api, live, esc, toast, token, FALLBACK, $, $$ } = TW, P = new URLSearchParams(location.search), eid = P.get('e') || 'ebook-en', sample = P.get('sample') === '1';
+  const pages = $('#pages'), banner = $('#banner'), toc = $('#toc'), bms = $('#bms'), drawer = $('#drawer');
+  let man = null, pdf = null, scale = 1, zoom = 1, cur = 1, total = 0, dirty = false, wm = '', rendered = new Map(), io = null, refreshed = false;
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+  const open = (on) => { drawer.classList.toggle('open', on); }; $('#tocBtn').addEventListener('click', () => open(true)); $('.bg', drawer).addEventListener('click', () => open(false));
+  $$('[data-dt]').forEach((b) => b.addEventListener('click', () => { $$('[data-dt]').forEach((x) => x.classList.toggle('on', x === b)); toc.hidden = b.dataset.dt !== 'toc'; bms.hidden = b.dataset.dt !== 'bm'; }));
+  /* ---------- preview without API: approved sample text ---------- */
+  const previewText = () => { const S = FALLBACK.sample_text; $('#title').textContent = pick(FALLBACK.editions.find((e) => e.id === eid) || FALLBACK.editions[0], 'title'); banner.innerHTML = `<p class="ribbon">${t('preview_mode')} · ${t('rd_preview_p')}</p>`; pages.innerHTML = `<div class="rd-page text" data-wm="${t('preview_mode')}"><div class="cred">${S.credits.join('<br>')}</div></div><div class="rd-page text" data-wm="${t('preview_mode')}"><h2>${esc(FALLBACK.chapters_en[2])}</h2>${S.intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div>`; toc.innerHTML = FALLBACK.chapters_en.map((c, i) => `<li class="${i > 2 ? 'off' : ''}"><i>${String(i + 1).padStart(2, '0')}</i><span>${esc(lang === 'ar' ? FALLBACK.chapters_ar[i] : c)}</span></li>`).join(''); };
+  /* ---------- manifest ---------- */
+  const loadManifest = async () => { man = await api(`/api/editions/${encodeURIComponent(eid)}/manifest${sample ? '?sample=1' : ''}`, { auth: !sample }); return man; };
+  const saveProgress = (beacon) => { if (sample || !live || !dirty) return; dirty = false; const body = { edition_id: eid, locator: 'page:' + cur, percent: total ? Math.round((cur / total) * 1000) / 10 : null, client_time: new Date().toISOString() }; if (beacon && navigator.sendBeacon) { fetch(TW.C.api + '/api/progress', { method: 'PUT', keepalive: true, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token() }, body: JSON.stringify(body) }).catch(() => {}); } else api('/api/progress', { method: 'PUT', body }).catch(() => {}); };
+  setInterval(() => saveProgress(false), 10000); addEventListener('pagehide', () => saveProgress(true)); document.addEventListener('visibilitychange', () => { if (document.hidden) saveProgress(true); });
+  /* ---------- PDF ---------- */
+  const fitScale = async () => { const p1 = await pdf.getPage(1), vp = p1.getViewport({ scale: 1 }), w = Math.min(pages.clientWidth - 16, 900); return w / vp.width; };
+  const renderPage = async (n) => { const holder = pages.children[n - 1]; if (!holder || holder.dataset.done === String(zoom)) return; holder.dataset.done = String(zoom); try { const p = await pdf.getPage(n), vp = p.getViewport({ scale: scale * zoom }), dpr = Math.min(devicePixelRatio || 1, 2), c = holder.querySelector('canvas') || document.createElement('canvas'); c.width = vp.width * dpr; c.height = vp.height * dpr; c.style.width = vp.width + 'px'; c.style.height = vp.height + 'px'; holder.style.width = vp.width + 'px'; holder.style.height = vp.height + 'px'; if (!c.parentNode) holder.appendChild(c); await p.render({ canvasContext: c.getContext('2d'), viewport: vp, transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null }).promise; } catch (e) { holder.dataset.done = ''; await handleMediaError(e); } };
+  const handleMediaError = async (e) => { const msg = String(e && (e.message || e)); if (!refreshed && /410|403|expired|Unexpected server response/i.test(msg)) { refreshed = true; toast(t('pl_refreshed')); await openPdf(await loadManifest(), cur); } };
+  const layout = async () => { scale = await fitScale(); const p1 = await pdf.getPage(1), vp = p1.getViewport({ scale: scale * zoom }); pages.innerHTML = ''; for (let i = 1; i <= total; i++) { const d = document.createElement('div'); d.className = 'rd-page'; d.dataset.wm = wm; d.dataset.n = i; d.style.width = vp.width + 'px'; d.style.height = vp.height + 'px'; pages.appendChild(d); } io && io.disconnect(); io = new IntersectionObserver((es) => { es.forEach((x) => { if (x.isIntersecting) { renderPage(+x.target.dataset.n); if (x.intersectionRatio > 0.5) { const n = +x.target.dataset.n; if (n !== cur) { cur = n; dirty = true; paintFoot(); } } } }); }, { rootMargin: '600px 0px', threshold: [0, 0.5] }); [...pages.children].forEach((d) => io.observe(d)); };
+  const goTo = (n) => { n = Math.max(1, Math.min(total, n)); const el = pages.children[n - 1]; if (el) { const top = el.getBoundingClientRect().top + window.scrollY - 64; window.scrollTo({ top, behavior: 'auto' }); } cur = n; dirty = true; paintFoot(); open(false); };
+  const paintFoot = () => { $('#foot').hidden = false; $('#slider').max = total; $('#slider').value = cur; $('#pageLbl').textContent = t('rd_page', { n: cur, m: total }); $$('#toc li').forEach((li) => li.classList.toggle('on', +li.dataset.p <= cur && (!li.nextElementSibling || +li.nextElementSibling.dataset.p > cur))); };
+  const openPdf = async (m, startPage) => {
+    const url = sample ? m.file_url : m.file_url; if (!url) { pages.innerHTML = `<div class="status-card" style="margin:24px 16px"><p>${t('rd_no_file')}</p>${sample ? `<a class="btn btn-primary" href="checkout.html?add=ebook">${t('rd_buy')}</a>` : ''}</div>`; return; }
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    try { pdf = await pdfjsLib.getDocument({ url, rangeChunkSize: 262144, disableAutoFetch: true, disableStream: false }).promise; } catch (e) { await handleMediaError(e); if (!pdf) { pages.innerHTML = `<div class="status-card" style="margin:24px 16px"><p>${esc(e.message || t('err_generic'))}</p><button class="btn btn-outline" onclick="location.reload()">${t('retry')}</button></div>`; } return; }
+    total = pdf.numPages; await layout(); const start = startPage || (m.progress && /^page:(\d+)$/.test(m.progress.locator || '') ? +m.progress.locator.slice(5) : 1); setTimeout(() => goTo(start), 50);
+  };
+  /* ---------- boot ---------- */
+  if (!live) { previewText(); return; }
+  try {
+    const m = await loadManifest(); $('#title').textContent = pick(m.edition, 'title'); document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    if (sample) banner.innerHTML = `<p class="ribbon">${t('rd_sample')} · <a href="checkout.html?add=ebook">${t('rd_buy')}</a></p>`;
+    else { try { const me = JSON.parse(sessionStorage.getItem('tw_me') || 'null') || await api('/api/me'); sessionStorage.setItem('tw_me', JSON.stringify(me)); wm = `${t('rd_licensed')} ${me.email}`; } catch (_) { wm = t('rd_licensed') + ' ' + (localStorage.getItem('tw_email') || ''); } }
+    if (m.edition.reader === 'epub') banner.insertAdjacentHTML('beforeend', `<p class="ribbon">${t('rd_epub_soon')}</p>`);
+    banner.insertAdjacentHTML('beforeend', `<p class="wm-note">${t('rd_fixed')}</p>`);
+    toc.innerHTML = m.chapters.map((c) => `<li data-p="${c.page_start || 1}" class="${c.page_start ? '' : 'off'}"><i>${String(c.idx).padStart(2, '0')}</i><span>${esc(pick(c, 'title'))}</span></li>`).join('');
+    toc.addEventListener('click', (e) => { const li = e.target.closest('li'); if (li && !li.classList.contains('off')) goTo(+li.dataset.p); });
+    const paintBms = () => { bms.innerHTML = (m.bookmarks || []).length ? m.bookmarks.map((b) => `<li data-p="${(b.locator || '').replace('page:', '')}"><i>p.${esc((b.locator || '').replace('page:', ''))}</i><span>${esc(b.note || '')}</span><button class="ibtn" data-del="${b.id}" aria-label="${t('remove')}"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/x.svg)"></span></button></li>`).join('') : `<li class="off">${t('rd_no_bm')}</li>`; };
+    paintBms(); bms.addEventListener('click', async (e) => { const d = e.target.closest('[data-del]'); if (d) { await api('/api/bookmarks/' + d.dataset.del, { method: 'DELETE' }); m.bookmarks = m.bookmarks.filter((b) => b.id !== +d.dataset.del); return paintBms(); } const li = e.target.closest('li[data-p]'); if (li) goTo(+li.dataset.p); });
+    $('#bmBtn').addEventListener('click', async () => { if (sample) return toast(t('rd_sample')); try { const r = await api('/api/bookmarks', { method: 'POST', body: { edition_id: eid, locator: 'page:' + cur } }); m.bookmarks.unshift({ id: r.id, locator: 'page:' + cur }); paintBms(); toast('✓ ' + t('rd_page', { n: cur, m: total })); } catch (err) { toast(err.message, 'err'); } });
+    await openPdf(m);
+    $('#prev').addEventListener('click', () => goTo(cur - 1)); $('#next').addEventListener('click', () => goTo(cur + 1)); $('#slider').addEventListener('change', (e) => goTo(+e.target.value)); $('#slider').addEventListener('input', (e) => { $('#pageLbl').textContent = t('rd_page', { n: e.target.value, m: total }); });
+    $('#zIn').addEventListener('click', async () => { zoom = Math.min(3, +(zoom + 0.25).toFixed(2)); const c = cur; await layout(); goTo(c); }); $('#zOut').addEventListener('click', async () => { zoom = Math.max(0.6, +(zoom - 0.25).toFixed(2)); const c = cur; await layout(); goTo(c); });
+    let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(async () => { if (pdf) { const c = cur; await layout(); goTo(c); } }, 250); });
+  } catch (e) { if (e.status === 401 || e.code === 'signin') location.href = 'library.html'; else if (e.code === 'not_owned') pages.innerHTML = `<div class="status-card" style="margin:24px 16px"><p>${esc(e.message)}</p><a class="btn btn-primary" href="checkout.html?add=ebook">${t('rd_buy')}</a></div>`; else pages.innerHTML = `<div class="status-card" style="margin:24px 16px"><p>${esc(e.message)}</p><button class="btn btn-outline" onclick="location.reload()">${t('retry')}</button></div>`; }
+})();
+</script>
+</body>
+</html>
