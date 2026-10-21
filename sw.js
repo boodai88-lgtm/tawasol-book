@@ -1,5 +1,5 @@
 /* Tawasol hub service worker · app shell only. Never caches /api/ or media (paid files are never stored by the browser). */
-const V = 'tw-shell-v2', SHELL = ['./', 'index.html', 'checkout.html', 'return.html', 'library.html', 'read.html', 'listen.html', 'legal.html', 'help.html', 'site.css', 'tokens.css', 'hub.css', 'hub.js', 'i18n.js', 'config.js', 'img/wordmark.png', 'img/cover-en.png', 'img/cover-ar.png', 'img/icon-192.png', 'img/icon-512.png'];
+const V = 'tw-shell-v3', SHELL = ['./', 'index.html', 'checkout.html', 'return.html', 'library.html', 'read.html', 'listen.html', 'legal.html', 'help.html', 'site.css', 'tokens.css', 'hub.css', 'hub.js', 'i18n.js', 'config.js', 'img/wordmark.png', 'img/cover-en.png', 'img/cover-ar.png', 'img/icon-192.png', 'img/icon-512.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== V).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', (e) => {
