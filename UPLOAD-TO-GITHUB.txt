@@ -8,3 +8,5 @@ Tawasol hub — PREVIEW package (no payments, no sign-in; sample data only)
 
 What Dr. Bibi can see: the store, product details, checkout layout, the free sample pages of the reader and the first sample chapters of the player, the library and help pages in English and Arabic (language switch in the menu), and the admin preview at /admin/.
 What does not work yet: paying, receiving a code by email, the full book or full audiobook — those need the backend (api folder) and UPayments, which are not part of this package.
+
+AUDIO SAMPLES: copy the sample MP3s into the  samples  folder before uploading (names are listed in samples/README.txt). They play in the sample player at listen.html. Anything in that folder is public, so samples only.

@@ -25,12 +25,12 @@
 <footer id="footer"></footer>
 <script>
 (async () => {
-  const { t, lang, pick, mmss, api, live, esc, toast, token, ICON, FALLBACK, $, $$ } = TW, P = new URLSearchParams(location.search), eid = P.get('e') || 'audiobook-en', sample = P.get('sample') === '1';
+  const { t, lang, pick, mmss, api, live, esc, toast, token, ICON, FALLBACK, $, $$ } = TW, C = window.TAWASOL_CONFIG || {}, P = new URLSearchParams(location.search), eid = P.get('e') || 'audiobook-en', sample = P.get('sample') === '1';
   const audio = $('#audio'), toc = $('#toc'), seek = $('#seek'), sheet = $('#sheet'); let man = null, chapters = [], ci = 0, rate = +(localStorage.getItem('tw_rate') || 1), sleepAt = 0, sleepEoc = false, dirty = false, lastSave = 0, refreshing = false, seeking = false, pendingPos = 0;
   const icon = (el, n) => el.style.setProperty('--i', `url(${ICON(n)})`);
   const title = () => chapters[ci] ? pick(chapters[ci], 'title') : '';
   /* ---------- manifest ---------- */
-  const load = async () => { if (!live) { man = { edition: FALLBACK.editions.find((e) => e.id === eid) || FALLBACK.editions[2], sample: true, chapters: FALLBACK.chapters_en.map((c, i) => ({ idx: i + 1, title_en: c, title_ar: FALLBACK.chapters_ar[i], available: false, is_sample: i === 0 || i === 2 })).filter((c) => !sample || c.is_sample), bookmarks: [] }; } else man = await api(`/api/editions/${encodeURIComponent(eid)}/manifest${sample ? '?sample=1' : ''}`, { auth: !sample }); chapters = man.chapters; return man; };
+  const load = async () => { if (!live) { const S = C.previewSamples || {}; man = { edition: FALLBACK.editions.find((e) => e.id === eid) || FALLBACK.editions[2], sample: true, chapters: FALLBACK.chapters_en.map((c, i) => { const url = S[i + 1]; return { idx: i + 1, title_en: c, title_ar: FALLBACK.chapters_ar[i], available: !!url, url, is_sample: i === 0 || i === 2 || !!url }; }).filter((c) => !sample || c.is_sample), bookmarks: [] }; } else man = await api(`/api/editions/${encodeURIComponent(eid)}/manifest${sample ? '?sample=1' : ''}`, { auth: !sample }); chapters = man.chapters; return man; };
   const paintToc = () => { $('#tocH').textContent = sample ? t('pl_samples') : t('rd_contents'); toc.innerHTML = chapters.map((c, i) => `<li data-i="${i}" class="${i === ci ? 'on' : ''} ${c.available ? '' : 'off'}"><i>${String(c.idx).padStart(2, '0')}</i><span>${esc(pick(c, 'title'))}</span><span class="dur">${c.duration_sec ? mmss(c.duration_sec) : c.available ? '' : t('not_ready')}</span></li>`).join(''); };
   const paintBms = () => { const b = man.bookmarks || []; $('#bmH').hidden = !b.length; $('#bms').innerHTML = b.map((x) => `<li data-bi="${x.chapter_idx}" data-bp="${x.position_sec || 0}"><i>${mmss(x.position_sec)}</i><span>${esc((chapters.find((c) => c.idx === x.chapter_idx) || {}).title_en || '')}</span><button class="ibtn" data-del="${x.id}" aria-label="${t('remove')}"><span class="ico" style="--i:url(${ICON('x')})"></span></button></li>`).join(''); };
   /* ---------- playback ---------- */
@@ -73,7 +73,7 @@
   try {
     await load(); $('#title').textContent = pick(man.edition, 'title'); $('#cover').src = man.edition.cover || 'img/cover-en.png';
     if (sample) $('#banner').innerHTML = `<p class="ribbon">${t('pl_samples')} · <a href="checkout.html?add=audiobook">${t('pl_buy')}</a></p>`;
-    if (!live) $('#banner').insertAdjacentHTML('beforeend', `<p class="ribbon">${t('preview_mode')} · ${t('pl_not_ready')}</p>`);
+    if (!live) $('#banner').insertAdjacentHTML('beforeend', `<p class="ribbon">${t('preview_mode')}${chapters.some((c) => c.available) ? '' : ' · ' + t('pl_not_ready')}</p>`);
     paintBms(); const pr = man.progress, start = pr && pr.chapter_idx ? Math.max(0, chapters.findIndex((c) => c.idx === pr.chapter_idx)) : chapters.findIndex((c) => c.available);
     await setChapter(start >= 0 ? start : 0, pr && pr.position_sec ? pr.position_sec : 0, false);
   } catch (e) { if (e.status === 401 || e.code === 'signin') location.href = 'library.html'; else $('#banner').innerHTML = `<div class="status-card"><p>${esc(e.message)}</p>${e.code === 'not_owned' ? `<a class="btn btn-primary" href="checkout.html?add=audiobook">${t('pl_buy')}</a>` : `<button class="btn btn-outline" onclick="location.reload()">${t('retry')}</button>`}</div>`; }
