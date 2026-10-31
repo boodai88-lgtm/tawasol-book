@@ -65,3 +65,12 @@ Dr. Bibi's brief (Oct 2026): empathetic/validating replies · detect clinical qu
 - **Clinical questions**: regex + LLM detection → validating reply → asks name + WhatsApp (web) → event `clinical` → stored in `enquiries` (kind `clinical`, question in `message`) → team WhatsApp alert → **reminders** every `clinical_reminder_hours` (4) up to `clinical_reminder_max` (3) until someone marks it answered (`POST /api/admin/enquiries/:id/answered`). Replying to the client happens on WhatsApp by Dr. Bibi or staff.
 - **Voice notes**: on WhatsApp the Meta webhook delivers audio; transcription (Whisper or Google STT) is a stage-2 item once the WhatsApp channel is approved — not in the website phase.
 - Migration `0004_calendar.sql` adds slot/calendar/reminder columns.
+
+
+## Connecting Claude for the website test (no full backend yet)
+1. Get an Anthropic API key (console.anthropic.com → API keys).
+2. Cloudflare dashboard → Workers & Pages → Create → Hello World → *Edit code* → paste `api/assistant-worker.js` → Deploy.
+3. Worker → Settings → Variables: secret `ANTHROPIC_API_KEY`; var `ALLOWED_ORIGINS` = `https://boodai88-lgtm.github.io`; optional `ENQUIRY_WEBHOOK_URL` = an n8n/Make webhook that should receive bookings, questions and clinical requests (JSON) — e.g. to post them to the clinic WhatsApp or a Google Sheet.
+4. `web/config.js` → `assistantApi: "https://<worker>.<account>.workers.dev"` → upload config.js to GitHub.
+Result: Tawasol answers free text naturally with Claude (model `claude-sonnet-4-5`, ≤700 tokens, 20 requests/min per visitor), still inside the receptionist rules (no clinical advice, crisis script, booking steps). Cost is roughly KD 0.003–0.01 per conversation. The scripted flow remains as fallback when the worker is unreachable.
+Inside this design workspace the preview already uses Claude automatically (no key needed) — that's the behaviour the worker reproduces on the live site.

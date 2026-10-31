@@ -2,7 +2,7 @@
    DEMO (no api in config.js): a simulated Google Calendar — clinic hours from clinic-config, a few pre-blocked slots, bookings kept in this browser (localStorage) so the demo feels real.
    LIVE (api set): slots come from /api/assistant/slots (Google Calendar free/busy through the Worker) and bookings are created server-side. */
 (function (g) {
-  const cfg = () => (g.TAWASOL_CLINIC && g.TAWASOL_CLINIC.calendar) || {}, C = () => g.TAWASOL_CONFIG || {}, api = () => String(C().api || '').replace(/\/$/, '');
+  const cfg = () => (g.TAWASOL_CLINIC && g.TAWASOL_CLINIC.calendar) || {}, C = () => g.TAWASOL_CONFIG || {}, api = () => String(C().api || '').replace(/\/$/, '');   // the demo calendar stays local until the FULL backend (api) exists; assistantApi alone does not change it
   const KEY = 'tw_demo_calendar', DAY_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], DAY_AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'], MON_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], MON_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
   const pad = (n) => String(n).padStart(2, '0'), hm = (s) => s.split(':').map(Number);
   const store = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{"bookings":[]}'); } catch (_) { return { bookings: [] }; } }, save = (s) => localStorage.setItem(KEY, JSON.stringify(s));
