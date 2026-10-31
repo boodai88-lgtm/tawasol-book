@@ -1,7 +1,7 @@
 /* Tawasol hub · interface strings. Interface language ≠ content language: product/edition names say which language the content is in. */
 window.TW_I18N = {
 en: {
-  nav_book:"The book", nav_order:"Order", nav_library:"My library", nav_samples:"Samples", order_now:"Order now", menu:"Menu", lang_switch:"العربية", skip:"Skip to content",
+  nav_book:"The book", nav_order:"Order", nav_library:"My library", nav_clinic: 'Clinic', nav_samples:"Samples", order_now:"Order now", menu:"Menu", lang_switch:"العربية", skip:"Skip to content",
   hero_eyebrow:"A guidebook by Dr. Bibi Alamiri", hero_h1:"“Tawasol”", hero_sub:"The Arabic word for connectedness.",
   hero_lead:"This guide is intended for parents, adolescents, or adults who are invested in deepening their understanding of themselves as a reflection of their upbringing and present circumstances to shape the future.",
   listen_sample:"Listen to a sample", order_book:"Order the book", written_by:"Written and narrated by", with:"With", illustrations:"Illustrations by",
@@ -51,7 +51,7 @@ en: {
   offline_banner:"You're offline. Reading and listening need a connection for now.",
 },
 ar: {
-  nav_book:"الكتاب", nav_order:"اطلب", nav_library:"مكتبتي", nav_samples:"عيّنات", order_now:"اطلب الآن", menu:"القائمة", lang_switch:"English", skip:"انتقل إلى المحتوى",
+  nav_book:"الكتاب", nav_order:"اطلب", nav_library:"مكتبتي", nav_clinic: 'العيادة', nav_samples:"عيّنات", order_now:"اطلب الآن", menu:"القائمة", lang_switch:"English", skip:"انتقل إلى المحتوى",
   hero_eyebrow:"دليل من تأليف د. بيبي العميري", hero_h1:"«تواصل»", hero_sub:"دليل للتواصل مع نفسك ومع الآخرين.",
   hero_lead:"هذا الدليل موجّه للآباء والأمهات والمراهقين والبالغين الراغبين في تعميق فهمهم لأنفسهم بوصفها انعكاساً لنشأتهم وظروفهم الحالية، من أجل تشكيل المستقبل.",
   listen_sample:"استمع إلى عيّنة", order_book:"اطلب الكتاب", written_by:"تأليف وأداء صوتي", with:"بمشاركة", illustrations:"الرسوم",

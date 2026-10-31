@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Chat with Tawasol</title>
+<meta name="theme-color" content="#f3eddf"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css"><link rel="stylesheet" href="assistant/widget.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script><script src="assistant/clinic-config.js"></script><script src="assistant/scheduler.js"></script><script src="assistant/engine.js"></script><script src="assistant/widget.js"></script>
+<style>body[data-page=chat]{overflow:hidden}body[data-page=chat] main{padding:0}.chat-wrap{max-width:720px;margin:0 auto;height:calc(100dvh - 60px);display:flex;flex-direction:column}.chat-wrap>.tw-chat{flex:1;min-height:0}.demo-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;padding:8px var(--gutter,20px);font-size:13px;color:#6b665c;flex:none}.demo-bar button{border:1.5px solid #e4dcc7;background:#fffdf8;border-radius:999px;padding:5px 12px;font:600 13px inherit;color:#2b2926;cursor:pointer}.demo-bar button[aria-pressed=true]{background:#2b2926;border-color:#2b2926;color:#f3eddf}.demo-bar:empty{display:none}@media (min-width:1000px){.chat-wrap{height:calc(100dvh - 72px);padding:20px 0 24px}.chat-wrap>.tw-chat{border-radius:20px;border:1px solid #e4dcc7;box-shadow:0 10px 40px rgba(43,41,38,.08)}}body.embed .nav,body.embed .demo-bar,body.embed .chat-launch{display:none}body.embed .chat-wrap{height:100dvh;padding:0;max-width:none}body.embed .chat-wrap>.tw-chat{border-radius:0;border:0;box-shadow:none}</style>
+</head>
+<body data-page="chat">
+<header class="nav" id="nav"></header>
+<main id="main"><div class="chat-wrap"><div class="demo-bar" id="demo"></div><div id="chat"></div></div></main>
+<script>
+(function () {
+  const P = new URLSearchParams(location.search), embed = P.has('embed'), ar = document.documentElement.lang === 'ar';
+  if (embed) document.body.classList.add('embed');
+  const el = document.getElementById('chat'), bar = document.getElementById('demo'); let channel = P.get('channel') === 'inbox' ? 'inbox' : 'web';
+  const render = () => { bar.innerHTML = embed ? '' : `<span>${ar ? 'معاينة:' : 'Preview:'}</span><button type="button" aria-pressed="${channel === 'web'}" data-c="web">${ar ? 'الموقع' : 'Website'}</button><button type="button" aria-pressed="${channel === 'inbox'}" data-c="inbox">${ar ? 'واتساب / إنستغرام' : 'WhatsApp / Instagram'}</button>`; bar.querySelectorAll('button').forEach((b) => (b.onclick = () => { channel = b.dataset.c; render(); TawasolChat.mount(el, { channel }); })); };
+  render(); TawasolChat.mount(el, { channel });
+})();
+</script>
+</body>
+</html>

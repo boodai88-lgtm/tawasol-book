@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Tawasol clinic · Book or ask</title>
+<meta name="theme-color" content="#f3eddf"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css"><link rel="stylesheet" href="assistant/widget.css">
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script><script src="assistant/clinic-config.js"></script><script src="assistant/scheduler.js"></script><script src="assistant/engine.js"></script><script src="assistant/widget.js"></script>
+<style>
+.cl-hero{padding:28px 0 8px}.cl-hero h1{font-size:clamp(34px,9vw,48px);line-height:1.05;margin:8px 0 10px;text-wrap:balance}.cl-hero p{color:#6b665c;max-width:56ch;text-wrap:pretty;margin:0}
+.cl-grid{display:grid;gap:20px;grid-template-columns:1fr;padding:18px 0 48px}
+.cl-chat{height:min(640px,calc(100dvh - 140px));min-height:460px;border-radius:20px;border:1px solid #e4dcc7;box-shadow:0 10px 40px rgba(43,41,38,.08);overflow:hidden;background:#fffdf8}.cl-chat>.tw-chat{height:100%}
+.cl-side{display:grid;gap:14px;align-content:start}.cl-card{background:#fffdf8;border-radius:16px;padding:16px 18px;box-shadow:0 1px 2px rgba(43,41,38,.05)}.cl-card h3{margin:0 0 6px;font-size:17px}.cl-card p{margin:0;color:#6b665c;font-size:14.5px;line-height:1.55}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.slots button{border:1.5px solid #e4dcc7;background:#fff;border-radius:999px;padding:8px 13px;font:600 13.5px inherit;color:#2b2926;cursor:pointer;min-height:40px}.slots button:hover{border-color:#726e3d;background:#edecd9}
+.forms a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #efe9db;text-decoration:none;color:inherit;font-weight:600;font-size:14.5px}.forms a:first-of-type{border-top:0}.forms a span{color:#726e3d;font-weight:700;font-size:13px}
+.cl-note{font-size:13px;color:#8b857a}.demo-tag{display:inline-block;background:#f6e3d3;color:#2b2926;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;margin-inline-start:6px;vertical-align:middle}
+@media (min-width:900px){.cl-grid{grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);align-items:start}.cl-chat{position:sticky;top:88px}}
+</style>
+</head>
+<body data-page="clinic">
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap">
+  <section class="cl-hero" data-screen-label="Clinic intro"><span class="eyebrow" id="c-eyebrow">Tawasol wellbeing clinic · Kuwait</span><h1 id="c-title">Book a session, or ask Tawasol</h1><p id="c-lead">Tawasol is the clinic’s virtual receptionist. She can find you an appointment with Dr. Bibi Alamiri, answer practical questions, and pass anything clinical straight to the doctor — in Arabic or English.</p></section>
+  <div class="cl-grid">
+    <div class="cl-chat" data-screen-label="Chat with Tawasol"><div id="chat"></div></div>
+    <aside class="cl-side">
+      <div class="cl-card" id="slots-card"><h3 id="s-title">Next available times <span class="demo-tag" id="demo-tag" hidden>demo calendar</span></h3><p id="s-sub">Tap a time to start booking it with Tawasol.</p><div class="slots" id="slots"></div></div>
+      <div class="cl-card forms" id="forms-card"><h3 id="f-title">Forms</h3><p id="f-sub">New clients fill in a short intake form before the first visit. Payment is arranged by the team when they confirm.</p><div id="forms"></div></div>
+      <div class="cl-card"><h3 id="u-title">Urgent?</h3><p id="u-text">Tawasol is not for emergencies. If you or someone else is in danger, call 112 now.</p></div>
+      <p class="cl-note" id="c-note">Everything you write here goes only to the clinic team and is treated as confidential.</p>
+    </aside>
+  </div>
+</main>
+<footer id="footer"></footer>
+<script>
+(function () {
+  const ar = document.documentElement.lang === 'ar', cfg = window.TAWASOL_CLINIC, L = (o) => (o && typeof o === 'object' ? (o[ar ? 'ar' : 'en'] || o.en) : o || '');
+  const T = ar ? { eyebrow: 'عيادة تواصل · الكويت', title: 'احجز جلسة، أو اسأل تواصل', lead: 'تواصل هي موظفة الاستقبال الافتراضية للعيادة. تجد لك موعداً مع د. بيبي العميري، وتجيب عن الأسئلة العملية، وتوصل أي سؤال طبي إلى الطبيبة مباشرة، بالعربية أو الإنجليزية.', s_title: 'أقرب المواعيد المتاحة', s_sub: 'اضغط على وقت لتبدئي حجزه مع تواصل.', demo: 'تقويم تجريبي', f_title: 'النماذج', f_sub: 'يعبّئ المراجعون الجدد نموذج تعارف قصيراً قبل الزيارة الأولى. أما الدفع فيرتّبه الفريق عند التأكيد.', intake: 'نموذج التعارف', consent: 'نموذج الموافقة', open: 'فتح', u_title: 'حالة عاجلة؟', u_text: 'تواصل ليست لحالات الطوارئ. إن كنت أنت أو أي شخص في خطر، اتصل بالرقم ١١٢ الآن.', note: 'كل ما تكتبه هنا يصل إلى فريق العيادة فقط ويُعامل بسرية تامة.', none: 'لا توجد مواعيد متاحة في الأيام القادمة، اطلب من تواصل وقتاً آخر.' } : { eyebrow: 'Tawasol wellbeing clinic · Kuwait', title: 'Book a session, or ask Tawasol', lead: 'Tawasol is the clinic’s virtual receptionist. She can find you an appointment with Dr. Bibi Alamiri, answer practical questions, and pass anything clinical straight to the doctor — in Arabic or English.', s_title: 'Next available times', s_sub: 'Tap a time to start booking it with Tawasol.', demo: 'demo calendar', f_title: 'Forms', f_sub: 'New clients fill in a short intake form before the first visit. Payment is arranged by the team when they confirm.', intake: 'Intake form', consent: 'Consent form', open: 'Open', u_title: 'Urgent?', u_text: 'Tawasol is not for emergencies. If you or someone else is in danger, call 112 now.', note: 'Everything you write here goes only to the clinic team and is treated as confidential.', none: 'No open times in the next few days — ask Tawasol for another time.' };
+  for (const [id, k] of [['c-eyebrow', 'eyebrow'], ['c-title', 'title'], ['c-lead', 'lead'], ['s-sub', 's_sub'], ['f-title', 'f_title'], ['f-sub', 'f_sub'], ['u-title', 'u_title'], ['u-text', 'u_text'], ['c-note', 'note']]) document.getElementById(id).textContent = T[k];
+  document.getElementById('s-title').firstChild.textContent = T.s_title + ' '; const tag = document.getElementById('demo-tag'); tag.textContent = T.demo; tag.hidden = !TawasolScheduler.isDemo();
+  const chat = TawasolChat.mount(document.getElementById('chat'), { channel: 'web' });
+  const renderSlots = () => { const host = document.getElementById('slots'), list = TawasolScheduler.slots(ar ? 'ar' : 'en', { perDay: 2, days: 3 }); host.innerHTML = list.length ? list.map((s) => `<button type="button" data-slot="${s.id}">${s.title}</button>`).join('') : `<p class="cl-note">${T.none}</p>`; host.querySelectorAll('button').forEach((b) => (b.onclick = () => { chat.send(ar ? `أريد حجز موعد ${b.textContent}` : `I’d like to book ${b.textContent}`, 'menu:book'); document.getElementById('chat').scrollIntoView ? window.scrollTo({ top: document.getElementById('chat').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }) : null; })); };
+  TawasolScheduler.ready.then(renderSlots);
+  const f = cfg.forms || {}; document.getElementById('forms').innerHTML = [['intake', f.intake], ['consent', f.consent]].filter(([, v]) => v).map(([k, v]) => `<a href="${L(v)}" target="_blank" rel="noopener">${T[k]}<span>${T.open} ↗</span></a>`).join('');
+})();
+</script>
+</body>
+</html>

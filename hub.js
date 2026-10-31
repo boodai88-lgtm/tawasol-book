@@ -58,7 +58,7 @@
   const page = () => document.body.dataset.page;
   function nav() {
     const host = $('#nav'); if (!host) return;
-    const links = [['index.html', 'nav_book', 'index'], ['checkout.html', 'nav_order', 'checkout'], ['listen.html?e=audiobook-en&sample=1', 'nav_samples', 'samples'], ['library.html', 'nav_library', 'library']];
+    const links = [['index.html', 'nav_book', 'index'], ['checkout.html', 'nav_order', 'checkout'], ['listen.html?e=audiobook-en&sample=1', 'nav_samples', 'samples'], ['library.html', 'nav_library', 'library'], ['clinic.html', 'nav_clinic', 'clinic']];
     host.innerHTML = `<div class="wrap"><a class="brand" href="index.html"><img src="img/wordmark.png" alt="Tawasol"><span>${lang === 'ar' ? 'الدليل' : 'The Guidebook'}</span></a><div class="nav-right"><button class="btn btn-outline btn-sm ar" type="button" data-lang lang="${lang === 'ar' ? 'en' : 'ar'}" dir="${lang === 'ar' ? 'ltr' : 'rtl'}">${t('lang_switch')}</button><a class="cart-btn" href="checkout.html" aria-label="${t('nav_order')}"><span class="ico" style="--i:url(${ICON('shopping-bag')})"></span><b data-cart-count hidden></b></a><button class="menu-btn" type="button" aria-label="${t('menu')}" aria-expanded="false" data-menu><span class="ico" style="--i:url(${ICON('menu')})"></span></button></div><nav class="links">${links.map(([h, k, p]) => `<a href="${h}" ${p === page() ? 'class="on" aria-current="page"' : ''}>${t(k)}</a>`).join('')}<button class="btn btn-outline btn-sm" type="button" data-lang>${t('lang_switch')}</button><a class="btn btn-primary btn-sm" href="checkout.html">${t('order_now')}</a></nav></div>`;
     const mb = $('[data-menu]', host); mb.addEventListener('click', () => { const open = host.classList.toggle('open'); mb.setAttribute('aria-expanded', open); mb.firstElementChild.style.setProperty('--i', `url(${ICON(open ? 'x' : 'menu')})`); });
     $$('[data-lang]', host).forEach((b) => b.addEventListener('click', () => setLang(lang === 'ar' ? 'en' : 'ar')));
@@ -81,5 +81,6 @@
   window.addEventListener('offline', () => { let b = $('#offline'); if (!b) { b = document.createElement('div'); b.id = 'offline'; b.className = 'offline'; document.body.prepend(b); } b.textContent = t('offline_banner'); });
   window.addEventListener('online', () => { const b = $('#offline'); if (b) b.remove(); });
   window.TW = { t, lang, setLang, pick, fmt, fmtDate, mmss, esc, api, live, catalog, cart, token, setToken, deviceId, deviceName, toast, install, isIOS, standalone, ICON, FALLBACK, applyLang, $, $$, C };
-  document.addEventListener('DOMContentLoaded', () => { applyLang(); nav(); footer(); continuePill(); });
+  function launcher() { if (['chat', 'index', 'clinic'].includes(page()) || new URLSearchParams(location.search).has('embed') || $('.chat-launch')) return; const a = document.createElement('a'); a.className = 'chat-launch'; a.href = 'chat.html'; a.innerHTML = `<i style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/message-circle.svg)"></i><span>${lang === 'ar' ? 'تحدث مع تواصل' : 'Chat with Tawasol'}</span>`; document.body.appendChild(a); }
+  document.addEventListener('DOMContentLoaded', () => { applyLang(); nav(); footer(); continuePill(); launcher(); });
 })();

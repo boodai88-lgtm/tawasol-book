@@ -10,3 +10,6 @@ What Dr. Bibi can see: the store, product details, checkout layout, the free sam
 What does not work yet: paying, receiving a code by email, the full book or full audiobook — those need the backend (api folder) and UPayments, which are not part of this package.
 
 AUDIO SAMPLES: copy the sample MP3s into the  samples  folder before uploading (names are listed in samples/README.txt). They play in the sample player at listen.html. Anything in that folder is public, so samples only.
+
+CLINIC PAGE (new): clinic.html — "Clinic" in the menu. Tawasol the assistant, next available times (demo calendar), intake/consent form links.
+Before showing Dr. Bibi, replace the two placeholder links in assistant/clinic-config.js (forms.intake / forms.consent) with your real Google Forms, and fill the [confirm] facts (address, hours, WhatsApp number).
