@@ -2,7 +2,7 @@
    Regenerate from /tokens if the design system changes. */
 
 /* fonts */
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sacramento&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sacramento&display=swap');
 
 /* colors */
 :root {
@@ -92,7 +92,7 @@
 /* typography */
 :root {
   --font-script:  "Sacramento", "Snell Roundhand", cursive;
-  --font-display: "Jost", "Century Gothic", system-ui, sans-serif;
+  --font-display: "Nunito", "Century Gothic", system-ui, sans-serif;   /* Nunito replaces Jost everywhere (Oct 2026) */
   --font-body:    "Mulish", system-ui, -apple-system, sans-serif;
 
   
