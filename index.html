@@ -1,73 +1,72 @@
-<!-- @dsCard group="Tawasol Hub" viewport="390x844" name="Hub — Store (bilingual PWA)" subtitle="Mobile-first storefront · catalog-driven prices · EN/AR" -->
+<!-- @dsCard group="Tawasol Hub" viewport="390x844" name="Hub — Tawasol space (clinic home)" subtitle="Clinic-first home · assistant · the book referred to Amazon · EN/AR" -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Tawasol, The Guidebook — by Dr. Bibi Alamiri</title>
-<meta name="description" content="Tawasol, The Guidebook by Dr. Bibi Alamiri. Order the printed bilingual edition, the ebook, or the audiobook narrated by the author.">
+<title>Tawasol — wellbeing clinic · Dr. Bibi Alamiri</title>
+<meta name="description" content="Tawasol wellbeing clinic, Kuwait. Dr. Bibi Alamiri. Book a session or ask Tawasol, the clinic’s virtual receptionist, in Arabic or English.">
 <meta name="theme-color" content="#f3eddf"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="img/icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="site.css"><link rel="stylesheet" href="hub.css">
-<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script>
+<script src="config.js"></script><script src="i18n.js"></script><script src="hub.js"></script><script src="assistant/clinic-config.js"></script>
+<style>
+.space-hero{padding-block:34px 10px}.space-hero h1{font-size:clamp(36px,9.5vw,56px);line-height:1.04;margin:10px 0 14px;text-wrap:balance;max-width:16ch}.space-hero .lead{max-width:58ch}
+.svc{display:grid;gap:12px;grid-template-columns:1fr}.svc .card{display:flex;align-items:center;gap:14px;padding:16px 18px}.svc .card .ico{width:26px;height:26px;color:#726e3d;flex:none}.svc .card b{font-size:16px;font-weight:600}
+.book-row{display:grid;gap:22px;grid-template-columns:1fr;align-items:center;justify-items:center}.book-row .shelf{position:relative;width:100%;max-width:300px;aspect-ratio:.88/1;perspective:1400px}.book-row p{color:#6b665c;max-width:52ch;text-wrap:pretty}.book-row .amz{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.book-row .fine{font-size:13px;color:#8b857a;margin-top:10px}
+.quiet{background:#edecd9;border-radius:18px;padding:22px 20px;display:grid;gap:8px}.quiet h3{margin:0;font-size:20px}.quiet p{margin:0;color:#4a463f}
+@media (min-width:760px){.svc{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.svc .card{display:grid;gap:10px}.book-row{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);justify-items:stretch}.book-row .shelf{max-width:340px}}
+</style>
 </head>
 <body data-page="index">
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 <header class="nav" id="nav"></header>
 <main id="main">
-<section class="wrap hero" data-screen-label="Hero">
-  <div>
-    <span class="eyebrow" data-i18n="hero_eyebrow">A guidebook by Dr. Bibi Alamiri</span>
-    <h1><span data-i18n="hero_h1">“Tawasol”</span> <span class="h1-sub" data-i18n="hero_sub">The Arabic word for connectedness.</span></h1>
-    <p class="lead" data-i18n="hero_lead">This guide is intended for parents, adolescents, or adults who are invested in deepening their understanding of themselves as a reflection of their upbringing and present circumstances to shape the future.</p>
-    <div class="actions"><a class="btn btn-outline btn-lg" href="listen.html?e=audiobook-en&amp;sample=1" data-i18n="listen_sample">Listen to a sample</a><a class="btn btn-primary btn-lg" href="#formats" data-i18n="order_book">Order the book</a></div>
-    <p class="credits"><b data-i18n="written_by">Written and narrated by</b> <span data-i18n="author">Dr. Bibi Alamiri</span><br><b data-i18n="with">With</b> <span data-i18n="coauthor">Sulaiman Boodai</span> &nbsp;·&nbsp; <b data-i18n="illustrations">Illustrations by</b> <span data-i18n="illustrator">Marah Alkazak</span></p>
-    <div id="continue"></div>
-  </div>
-  <div class="shelf" aria-label="Book covers"><div class="book" id="coverEn"><div class="shadow"></div><div class="back"></div><div class="pages"></div><div class="bottom"></div><div class="spine"></div><div class="face"><img src="img/cover-en.png" alt="Tawasol, The Guidebook — English cover"></div></div><div class="book book-ar" id="coverAr"><div class="shadow"></div><div class="back"></div><div class="pages"></div><div class="bottom"></div><div class="spine"></div><div class="face"><img src="img/cover-ar.png" alt="تواصل — الدليل — الغلاف العربي"></div></div></div>
+<section class="wrap space-hero" data-screen-label="Tawasol space hero">
+  <span class="eyebrow" data-i18n="sp_eyebrow">Tawasol wellbeing clinic · Kuwait</span>
+  <h1 data-i18n="sp_h1">A space to connect — with yourself, and with others.</h1>
+  <p class="lead" data-i18n="sp_lead">Tawasol is Dr. Bibi Alamiri’s wellbeing clinic. Whether you are coming for yourself, your child, or your family, you can book a session or ask a question here, in Arabic or English.</p>
+  <div class="actions"><a class="btn btn-primary btn-lg" href="clinic.html" data-i18n="sp_talk">Talk to Tawasol</a><a class="btn btn-outline btn-lg" href="clinic.html#slots-card" data-i18n="sp_book">Book a session</a></div>
+  <p class="credits" data-i18n="sp_assist">Tawasol, the clinic’s virtual receptionist, answers right away. The team confirms times and payment within 24 hours on business days.</p>
 </section>
 
-<section class="section" id="formats" style="padding-top:24px" data-screen-label="Formats">
+<section class="section" style="padding-top:18px" data-screen-label="How we can help">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow" data-i18n="formats_eyebrow">Choose your format</span><h2 data-i18n="formats_h2">Three ways to read</h2></div></div>
-    <div class="grid-3" id="products" aria-live="polite"></div>
+    <div class="section-head"><div><span class="eyebrow" data-i18n="sp_svc_eyebrow">How we can help</span><h2 data-i18n="sp_svc_h2">Sessions for every stage</h2></div></div>
+    <div class="svc" id="services"></div>
   </div>
 </section>
 
-<section class="section" style="padding-top:8px" data-screen-label="Inside the book">
+<section class="section" id="book" style="padding-top:8px" data-screen-label="The book">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow" data-i18n="inside_eyebrow">Inside the book</span><h2 data-i18n="inside_h2">Three methods</h2></div><p class="lead" style="max-width:40ch;font-size:16px" data-i18n="inside_lead">Three methods of personal and interpersonal connectedness with yourself and others, to cultivate a climate of wellbeing and growth.</p></div>
-    <div class="grid-3">
-      <div class="card method"><img src="img/method-faces.png" alt=""><div class="num" data-i18n="m1">Method I</div><h4 data-i18n="m1_t">Tawasol Model</h4></div>
-      <div class="card method"><img src="img/method-tree.png" alt=""><div class="num" data-i18n="m2">Method II</div><h4 data-i18n="m2_t">Self-value Tree</h4></div>
-      <div class="card method"><img src="img/method-castle.png" alt=""><div class="num" data-i18n="m3">Method III</div><h4 data-i18n="m3_t">The Boundaries Castle</h4></div>
+    <div class="section-head"><div><span class="eyebrow" data-i18n="sp_book_eyebrow">From Dr. Bibi</span><h2 data-i18n="sp_book_h2">Tawasol, The Guidebook</h2></div></div>
+    <div class="book-row">
+      <div class="shelf" aria-label="Book covers"><div class="book" id="coverEn"><div class="shadow"></div><div class="back"></div><div class="pages"></div><div class="bottom"></div><div class="spine"></div><div class="face"><img src="img/cover-en.png" alt="Tawasol, The Guidebook — English cover"></div></div><div class="book book-ar" id="coverAr"><div class="shadow"></div><div class="back"></div><div class="pages"></div><div class="bottom"></div><div class="spine"></div><div class="face"><img src="img/cover-ar.png" alt="تواصل — الدليل — الغلاف العربي"></div></div></div>
+      <div>
+        <p data-i18n="sp_book_p">“Tawasol” is the Arabic word for connectedness. The guidebook brings together three methods of personal and interpersonal connectedness — the Tawasol Model, the Self-value Tree and the Boundaries Castle — for parents, adolescents and adults. Written by Dr. Bibi Alamiri with Sulaiman Boodai; illustrations by Marah Alkazak.</p>
+        <div class="amz" id="amazon"></div>
+        <p class="fine" data-i18n="sp_book_fine">The book is sold on Amazon, not here. Nothing on this site asks you to buy it.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="band" data-screen-label="Author band">
-  <div class="wrap"><img class="arches" src="img/arches.png" alt=""><div class="script" data-i18n="band_script">Written and narrated by Dr. Bibi Alamiri</div><p data-i18n="band_p">Founder of the Tawasol wellbeing clinic, Kuwait</p></div>
+  <div class="wrap"><img class="arches" src="img/arches.png" alt=""><div class="script" data-i18n="sp_band">Dr. Bibi Alamiri</div><p data-i18n="sp_band_p">Founder of the Tawasol wellbeing clinic, Kuwait</p></div>
 </section>
 
-<section class="section" data-screen-label="Licence">
+<section class="section" data-screen-label="Confidential & urgent">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow" data-i18n="lic_eyebrow">Your copy</span><h2 data-i18n="lic_h2">Licensed to you, personally</h2></div></div>
-    <div class="note-row">
-      <div class="note"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/pen-line.svg)"></span><div><b data-i18n="lic1_t">Marked with your name</b><span data-i18n="lic1_p">Your name and order number appear on every ebook page you open.</span></div></div>
-      <div class="note"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/lock.svg)"></span><div><b data-i18n="lic2_t">Streamed, not copied</b><span id="lic2" data-i18n='lic2_p|{"n":"3"}'>Ebooks and audio stream through short-lived links issued to your signed-in library, on up to 3 devices.</span></div></div>
-      <div class="note"><span class="ico" style="--i:url(https://unpkg.com/lucide-static@0.451.0/icons/handshake.svg)"></span><div><b data-i18n="lic3_t">Shared only with consent</b><span data-i18n="lic3_p">Copying or passing on a digital edition needs written permission from Tawasol.</span></div></div>
-    </div>
+    <div class="quiet"><h3 data-i18n="sp_conf_h">Confidential, like a call to reception</h3><p data-i18n="sp_conf_p">Everything you share through this site goes only to the clinic team. We ask only for a name and a WhatsApp number.</p><p data-i18n="sp_urgent">Tawasol is not for emergencies. If you or someone else is in danger, call 112 now; for urgent concerns, visit the nearest polyclinic.</p></div>
   </div>
 </section>
 </main>
 <footer id="footer"></footer>
 <script>
-(async () => {
-  const { t, pick, fmt, cart, catalog, ICON, esc, toast, applyLang } = TW, host = document.getElementById('products');
-  const cat = await catalog();
-  const icon = (p) => p.kind === 'physical' ? 'book-open' : p.grants.some((g) => g.startsWith('audiobook')) && p.grants.some((g) => g.startsWith('ebook')) ? 'library-big' : p.grants.some((g) => g.startsWith('audiobook')) ? 'headphones' : 'tablet-smartphone';
-  const meta = (p) => { const langs = new Set(p.grants.map((g) => g.split('-')[1])), out = []; if (p.kind === 'physical') out.push(t('lang_en_ar')); else if (langs.has('en') && langs.has('ar')) out.push(t('lang_en_ar')); else if (langs.has('en')) out.push(t('lang_en_only')); else if (langs.has('ar')) out.push(t('lang_ar_only')); if (p.grants.some((g) => g.startsWith('audiobook'))) out.push(t('narrated')); out.push(p.ships ? t('ships') : t('digital_in_library')); return out; };
-  const paint = () => { const c = cart.get(); host.innerHTML = cat.products.map((p) => `<div class="card fmt"><span class="ico ico-lg" style="--i:url(${ICON(icon(p))})"></span><h4>${esc(pick(p, 'name'))}</h4><p>${esc(pick(p, 'desc'))}</p><div class="meta">${meta(p).map((m) => `<span>${esc(m)}</span>`).join('')}</div><div class="price">${fmt(p.price_fils)}${p.low_stock ? ` <small>${t('low_stock', { n: p.stock })}</small>` : ''}</div>${!p.in_stock ? `<span class="badge muted">${t('sold_out')}</span>` : c.items[p.id] ? `<div class="acts" style="display:flex;gap:8px"><button class="btn btn-outline is-added" type="button" disabled>${t('added')} ✓</button><a class="btn btn-primary" href="checkout.html">${t('view_order')}</a></div>` : `<button class="btn btn-outline" type="button" data-add="${p.id}">${t('add')}</button>`}</div>`).join(''); };
-  host.addEventListener('click', (e) => { const b = e.target.closest('[data-add]'); if (!b) return; cart.add(b.dataset.add); paint(); toast(t('added') + ' ✓'); });
-  paint(); document.getElementById('lic2').textContent = t('lic2_p', { n: cat.max_devices || 3 });
+(() => {
+  const { t, ICON, esc, lang } = TW, cfg = window.TAWASOL_CLINIC || {}, C = window.TAWASOL_CONFIG || {}, ar = lang === 'ar';
+  const icons = { psychiatry: 'stethoscope', therapy: 'message-circle-heart', child: 'baby', family: 'users', followup: 'calendar-check' };
+  document.getElementById('services').innerHTML = (cfg.services || []).map((s) => `<a class="card" href="clinic.html?service=${encodeURIComponent(s.id)}"><span class="ico" style="--i:url(${ICON(icons[s.id] || 'leaf')})"></span><b>${esc(ar ? s.ar : s.en)}</b></a>`).join('');
+  const a = C.amazon || {}, links = [['print', a.print, ar ? 'الكتاب المطبوع على أمازون' : 'Printed book on Amazon'], ['kindle', a.kindle, ar ? 'نسخة كيندل' : 'Kindle edition'], ['audible', a.audible, ar ? 'الكتاب الصوتي (أوديبل)' : 'Audiobook on Audible']].filter(([, u]) => u);
+  document.getElementById('amazon').innerHTML = (links.length ? links : [['search', 'https://www.amazon.com/s?k=Tawasol+Bibi+Alamiri', ar ? 'ابحث عنه على أمازون' : 'Find it on Amazon']]).map(([k, u, l]) => `<a class="btn btn-outline" href="${esc(u)}" target="_blank" rel="noopener">${l} ↗</a>`).join('');
 })();
 </script>
 <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#c2bd83"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#2b2926">T</text></svg></template>

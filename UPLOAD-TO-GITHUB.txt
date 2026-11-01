@@ -15,3 +15,5 @@ CLINIC PAGE (new): clinic.html — "Clinic" in the menu. Tawasol the assistant, 
 Before showing Dr. Bibi, replace the two placeholder links in assistant/clinic-config.js (forms.intake / forms.consent) with your real Google Forms, and fill the [confirm] facts (address, hours, WhatsApp number).
 
 CLAUDE (natural replies): deploy assistant-worker.js as a Cloudflare Worker with your Anthropic key (steps in assistant/README.md → "Connecting Claude"), then put its URL in config.js → assistantApi. Do NOT upload assistant-worker.js itself to GitHub Pages — it is server code, it only goes into Cloudflare.
+
+AMAZON LINKS: in config.js → amazon, paste the exact Amazon product links (print / kindle / audible). Empty ones are hidden; with none set the page shows a neutral "Find it on Amazon" search link.

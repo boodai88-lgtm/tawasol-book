@@ -74,3 +74,19 @@ Dr. Bibi's brief (Oct 2026): empathetic/validating replies · detect clinical qu
 4. `web/config.js` → `assistantApi: "https://<worker>.<account>.workers.dev"` → upload config.js to GitHub.
 Result: Tawasol answers free text naturally with Claude (model `claude-sonnet-4-5`, ≤700 tokens, 20 requests/min per visitor), still inside the receptionist rules (no clinical advice, crisis script, booking steps). Cost is roughly KD 0.003–0.01 per conversation. The scripted flow remains as fallback when the worker is unreachable.
 Inside this design workspace the preview already uses Claude automatically (no key needed) — that's the behaviour the worker reproduces on the live site.
+
+
+## Patient context, passcodes and the secure inbox (Nov 2026 — Dr. Bibi's requests)
+- **Intake order**: beneficiary first — full name → age → *"What is your relationship to {name}?"* (Myself / My child / Other — write) → visited before → service → clinician → mode → time → WhatsApp → reason.
+- **Location** is never given by the assistant; it says the team sends it with the confirmation.
+- **Send an update to Dr. Bibi** (new menu item): the client types the personal **passcode** the clinic gave them (any phone/device works), writes the update, and it lands — with the patient-file columns from the clinic's **Google Sheet** — in the admin **Inbox**. Mentions of medication flag the row and also ping the **nurse** (Settings → Nurse WhatsApp). Alerts to WhatsApp contain only a reference; details stay in the inbox. Demo passcode without a sheet: **TW-1234**.
+- **Sheet layout** (tab `Patients`): `File no | Name | Passcode | WhatsApp | Age | Clinician | Diagnosis | Current medication | Allergies | Last visit | Next appointment | Notes for assistant` — only the columns named in Settings are read. Updates are appended to an `Updates` tab. Setup: `GOOGLE_SHEET_ID` + the same service account as the calendar (share the sheet with it) + `PHI_KEY` secret. Migration `0005_patients.sql`.
+- Security framework, vendor agreements and open decisions: **COMPLIANCE.md** (hub root).
+
+
+## Clinic facts loaded from the team's current templates (1 Nov 2026)
+- Response promise: the assistant answers instantly; the **24 hours on business days (Sunday–Thursday)** applies only to human follow-up (confirming the time, payment, Dr. Bibi’s replies). Urgent concerns → nearest polyclinic (now in the assistant's answers alongside 112 for emergencies).
+- Fees: Psychiatric Clinical Diagnostic Interview KD 220 · 50 min · all ages; Follow-up KD 120 · 25 min · all ages. Advance payment confirms a booking. Scheduling follows the doctor's availability.
+- Cancellation: same-day cancellation/rescheduling may forfeit the fee; 24 hours' notice.
+- Location: MEDC2 Complex, Sabah Al-Salem, Block 1, Street 106, 7th floor, beside AlMezzan Pharmacy — https://maps.app.goo.gl/ndSysaztJUuQsEbS8 — **sent by the team only after payment/confirmation**, never by the assistant.
+- Team's confirmation message (sent manually after payment): *"Thank you for your payment. Your appointment is confirmed for {day}, {date} at {time}. Please note that same-day cancellations or rescheduling may result in the session fee being forfeited. Kindly provide at least 24 hours' notice for any changes. Location: … 📍 map link"* — kept as the staff template; the admin can later send it from the Inbox with one tap (phase 2).
