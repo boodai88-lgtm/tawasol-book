@@ -90,3 +90,7 @@ Inside this design workspace the preview already uses Claude automatically (no k
 - Cancellation: same-day cancellation/rescheduling may forfeit the fee; 24 hours' notice.
 - Location: MEDC2 Complex, Sabah Al-Salem, Block 1, Street 106, 7th floor, beside AlMezzan Pharmacy — https://maps.app.goo.gl/ndSysaztJUuQsEbS8 — **sent by the team only after payment/confirmation**, never by the assistant.
 - Team's confirmation message (sent manually after payment): *"Thank you for your payment. Your appointment is confirmed for {day}, {date} at {time}. Please note that same-day cancellations or rescheduling may result in the session fee being forfeited. Kindly provide at least 24 hours' notice for any changes. Location: … 📍 map link"* — kept as the staff template; the admin can later send it from the Inbox with one tap (phase 2).
+
+
+## Decision log
+- **1 Nov 2026 — WhatsApp may carry clinical questions and updates** (Dr. Bibi). Team alerts now include the client's question text by default (`alerts_include_details` = 1, Admin → Settings). The encrypted inbox remains the record of truth; see COMPLIANCE.md §7.

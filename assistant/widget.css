@@ -24,3 +24,5 @@
 .tw-composer button{width:46px;height:46px;border-radius:50%;border:0;background:var(--tw-ink);color:var(--tw-paper);display:grid;place-items:center;cursor:pointer;flex:none}.tw-composer button:disabled{opacity:.4}
 .tw-foot{margin:0;padding:4px 16px calc(8px + env(safe-area-inset-bottom));font-size:12px;color:var(--tw-ink2);text-align:center;background:var(--tw-paper);flex:none}
 @media (prefers-reduced-motion:reduce){.tw-typing i{animation:none;opacity:.7}}
+
+.tw-avatar img{width:78%;height:78%;object-fit:contain;display:block}.tw-avatar{background:#fff!important;color:transparent!important;overflow:hidden;display:inline-flex;align-items:center;justify-content:center}

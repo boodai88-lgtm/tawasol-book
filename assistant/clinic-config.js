@@ -8,7 +8,8 @@
     address: { en: 'MEDC2 Complex, Sabah Al-Salem, Block 1, Street 106, 7th floor — beside AlMezzan Pharmacy', ar: 'مجمع MEDC2، صباح السالم، قطعة 1، شارع 106، الدور السابع، بجانب صيدلية الميزان' },   // sent by the team ONLY after confirmation (see mapLink)
     mapLink: 'https://maps.app.goo.gl/ndSysaztJUuQsEbS8',
     hours: { en: 'Sunday to Thursday', ar: 'من الأحد إلى الخميس' },
-    phone: '[confirm: clinic WhatsApp number]',
+    phone: '+965 6668 9362',                               // clinic WhatsApp (confirmed 3 Nov 2026)
+    whatsappLink: 'https://wa.me/96566689362',
     emergency: { en: '112 (Kuwait emergency services)', ar: '١١٢ (الطوارئ في الكويت)' },
     urgentLine: '',                                    // the clinic's own urgent line, if one exists; shown inside the crisis message
     confirmWindow: { en: 'within 24 hours on business days (Sunday–Thursday) to confirm the time and payment', ar: 'خلال ٢٤ ساعة في أيام العمل (الأحد–الخميس) لتأكيد الموعد والدفع' },
@@ -27,12 +28,9 @@
       intake: { en: 'https://forms.gle/REPLACE-intake-en', ar: 'https://forms.gle/REPLACE-intake-ar' },
       consent: { en: 'https://forms.gle/REPLACE-consent-en', ar: 'https://forms.gle/REPLACE-consent-ar' },
     },
-    services: [
-      { id: 'psychiatry', en: 'Psychiatry consultation', ar: 'استشارة طب نفسي', k: ['psychiat', 'consult', 'assessment', 'evaluat', 'طب نفسي', 'استشارة', 'تقييم'] },
-      { id: 'therapy', en: 'Therapy & counselling', ar: 'علاج نفسي وإرشاد', k: ['therap', 'counsel', 'talk', 'session', 'علاج', 'إرشاد', 'جلسات'] },
-      { id: 'child', en: 'Child & adolescent', ar: 'الأطفال والمراهقون', k: ['child', 'kid', 'son', 'daughter', 'teen', 'adolesc', 'school', 'طفل', 'ابن', 'بنت', 'مراهق', 'مدرسة'] },
-      { id: 'family', en: 'Family & parenting', ar: 'إرشاد أسري وتربوي', k: ['famil', 'parent', 'couple', 'marri', 'أسر', 'عائل', 'تربية', 'زوج'] },
-      { id: 'followup', en: 'Follow-up visit', ar: 'زيارة متابعة', k: ['follow', 'review', 'متابعة', 'مراجعة'] },
+    services: [                                           // exactly two (Dr. Bibi, 3 Nov 2026) — matches the fee card
+      { id: 'psychiatry', en: 'Psychiatric consultation', ar: 'استشارة نفسية', k: ['psychiat', 'consult', 'assessment', 'evaluat', 'diagnos', 'interview', 'first', 'new', 'therap', 'counsel', 'child', 'kid', 'teen', 'famil', 'طب نفسي', 'استشارة', 'تقييم', 'تشخيص', 'مقابلة', 'جديد', 'أول', 'اول', 'طفل', 'مراهق', 'أسر'] },
+      { id: 'followup', en: 'Follow-up session', ar: 'جلسة متابعة', k: ['follow', 'review', 'again', 'second', 'متابعة', 'مراجعة', 'مرة ثانية'] },
     ],
     clinicians: [
       { id: 'bibi', en: 'Dr. Bibi Alamiri', ar: 'د. بيبي العميري', k: ['bibi', 'alamiri', 'بيبي', 'العميري'] },

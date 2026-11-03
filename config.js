@@ -3,6 +3,7 @@ window.TAWASOL_CONFIG = {
   api: "",                         // e.g. "https://tawasol-hub-api.<your-account>.workers.dev"  (empty = preview mode, no payments or sign-in)
   assistantApi: "https://aged-mud-dbb7.boodai88.workers.dev",                // Tawasol assistant only — URL of the stand-alone worker (api/assistant-worker.js) so the chat uses Claude before the full backend exists. Leave empty to use the scripted demo.
   supportEmail: "hello@tawasol.clinic",
+  supportWhatsApp: "96566689362",      // clinic WhatsApp, digits only — used for wa.me links
   // The book is referred to Amazon, not sold here. Paste the exact product links; any left empty is hidden. If all are empty the site shows a neutral Amazon search link.
   amazon: { print: "", kindle: "", audible: "" },
   defaultLang: "en",               // first visit; afterwards the visitor's choice is remembered
