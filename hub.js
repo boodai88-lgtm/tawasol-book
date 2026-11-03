@@ -77,7 +77,7 @@
   let installEvt = null; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; $$('[data-install]').forEach((b) => { b.hidden = false; }); });
   const install = async () => { if (!installEvt) return false; installEvt.prompt(); await installEvt.userChoice; installEvt = null; return true; };
   const isIOS = /iPhone|iPad/.test(navigator.userAgent) && !window.MSStream, standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').then((r) => r.update()).catch(() => {});
   window.addEventListener('offline', () => { let b = $('#offline'); if (!b) { b = document.createElement('div'); b.id = 'offline'; b.className = 'offline'; document.body.prepend(b); } b.textContent = t('offline_banner'); });
   window.addEventListener('online', () => { const b = $('#offline'); if (b) b.remove(); });
   window.TW = { t, lang, setLang, pick, fmt, fmtDate, mmss, esc, api, live, catalog, cart, token, setToken, deviceId, deviceName, toast, install, isIOS, standalone, ICON, FALLBACK, applyLang, $, $$, C };
