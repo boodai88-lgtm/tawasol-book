@@ -3,7 +3,8 @@
 // Settings → Variables: secret ANTHROPIC_API_KEY; vars ALLOWED_ORIGINS (e.g. "https://boodai88-lgtm.github.io"), optional ENQUIRY_WEBHOOK_URL (n8n / Make / Zapier webhook that receives bookings, questions and clinical requests as JSON).
 // Google Calendar (optional, no Google Cloud needed): deploy api/google-calendar-bridge.gs inside the clinic Google account, then set
 //   GCAL_BRIDGE_URL (the web-app URL ending in /exec) and secret GCAL_BRIDGE_SECRET (the same SECRET as in the script).
-//   Optional clinic grid (used only when the calendar has no OPEN events): CLINIC_DAYS "0,1,2,3,4" (0=Sunday), CLINIC_START "10:00", CLINIC_END "18:00", SLOT_MIN "50", LEAD_HOURS "20".
+//   Slot lengths: SLOT_MIN "50" (consultation), FOLLOWUP_MIN "25" (follow-up); LEAD_HOURS "20" = earliest offer. When the calendar has NO OPEN events nothing is
+//   offered (the client types a preferred time and the team replies) unless FALLBACK_GRID="1", which offers CLINIC_DAYS "0,1,2,3,4" (0=Sunday) CLINIC_START "10:00"–CLINIC_END "18:00".
 //   Preferred control for the team: events titled "OPEN" in the clinic calendar (e.g. OPEN 16:00–20:00, repeating weekly) — when any exist in the
 //   next ~10 days, times are offered ONLY inside them; every other event blocks time. Delete the OPEN events to return to the grid.
 // Then in web/config.js set assistantApi: "https://<worker-name>.<account>.workers.dev".
@@ -18,11 +19,14 @@ async function bridge(env, action, payload = {}) {
   if (!j.ok) throw new Error(j.error || 'bridge failed'); return j;
 }
 /* Offered times = OPEN windows (if the calendar has any) or the clinic grid, minus busy periods and the lead time. Slots are clinic-local strings "YYYY-MM-DDTHH:MM" (Asia/Kuwait, UTC+3). */
-function gridSlots(busy, env, days, open = []) {
-  const step = +env.SLOT_MIN || 50, lead = env.LEAD_HOURS == null ? 20 : +env.LEAD_HOURS, pad = (n) => String(n).padStart(2, '0'), out = [];
+const minutesFor = (env, service, override) => { const n = +override; if (n >= 15 && n <= 120) return n; return service === 'followup' ? (+env.FOLLOWUP_MIN || 25) : (+env.SLOT_MIN || 50); };
+function gridSlots(busy, env, days, open = [], step) {
+  step = step || +env.SLOT_MIN || 50;
+  const lead = env.LEAD_HOURS == null ? 20 : +env.LEAD_HOURS, pad = (n) => String(n).padStart(2, '0'), out = [];
   const local = (ms) => { const d = new Date(ms + 3 * 3600e3); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`; };
   const free = (s, e) => s >= Date.now() + lead * 3600e3 && !busy.some(([bs, be]) => s < be && e > bs);
   if (open.length) { for (const [ws, we] of open) for (let s = ws; s + step * 60e3 <= we; s += step * 60e3) if (free(s, s + step * 60e3)) out.push(local(s)); return [...new Set(out)].sort(); }
+  if (env.FALLBACK_GRID !== '1') return [];                                                        // no OPEN events → nothing offered; the client types a preferred time
   const days0 = String(env.CLINIC_DAYS || '0,1,2,3,4').split(',').map(Number), [sh, sm] = String(env.CLINIC_START || '10:00').split(':').map(Number), [eh, em] = String(env.CLINIC_END || '18:00').split(':').map(Number);
   for (let d = 0; d <= days; d++) {
     const day = new Date(Date.now() + 3 * 3600e3 + d * 864e5), y = day.getUTCFullYear(), mo = day.getUTCMonth() + 1, da = day.getUTCDate(); if (!days0.includes(day.getUTCDay())) continue;
@@ -54,8 +58,8 @@ export default {
     if (req.method === 'POST' && url.pathname === '/api/assistant/requests') {
       const b = await req.json().catch(() => ({})); let hold = null;
       if (b.kind === 'booking' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(b.slot || '') && bridgeOn(env)) {     // tentative HOLD in the clinic calendar
-        const start = Date.parse(b.slot + ':00+03:00'), end = start + (+env.SLOT_MIN || 50) * 60e3;
-        try { hold = await bridge(env, 'hold', { start: new Date(start).toISOString(), end: new Date(end).toISOString(), title: `HOLD · ${b.name || 'New client'} · ${b.service || 'appointment'}`, description: `Requested through the Tawasol assistant (website).\nWhatsApp: ${b.phone || '—'}\n${b.who ? 'For: ' + b.who + '\n' : ''}${b.age ? 'Age: ' + b.age + '\n' : ''}${b.mode ? 'Mode: ' + b.mode + '\n' : ''}${b.reason ? 'Reason: ' + b.reason + '\n' : ''}Status: tentative — confirm with the client, then rename or delete.` }); }
+        const minutes = minutesFor(env, b.service, b.minutes), start = Date.parse(b.slot + ':00+03:00'), end = start + minutes * 60e3;
+        try { hold = await bridge(env, 'hold', { start: new Date(start).toISOString(), end: new Date(end).toISOString(), title: `HOLD · ${b.name || 'New client'} · ${b.service === 'followup' ? 'Follow-up' : 'Consultation'} (${minutes} min)`, description: `Requested through the Tawasol assistant (website).\nWhatsApp: ${b.phone || '—'}\n${b.who ? 'For: ' + b.who + '\n' : ''}${b.age ? 'Age: ' + b.age + '\n' : ''}${b.mode ? 'Mode: ' + b.mode + '\n' : ''}${b.reason ? 'Reason: ' + b.reason + '\n' : ''}Status: tentative — confirm with the client, then rename or delete.` }); }
         catch (e) { console.error('calendar hold failed', e.message); hold = { error: e.message }; }
       }
       if (env.ENQUIRY_WEBHOOK_URL) { try { await fetch(env.ENQUIRY_WEBHOOK_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ received_at: new Date().toISOString(), source: 'tawasol-website', calendar_hold: hold, ...b }) }); } catch (e) { console.error('webhook', e.message); } }
@@ -64,8 +68,8 @@ export default {
     }
     if (req.method === 'GET' && url.pathname === '/api/assistant/slots') {
       if (!bridgeOn(env)) return json({ slots: [], demo: true }, 200, origin);                              // demo calendar stays in the browser until the bridge is set
-      const days = Math.min(30, Math.max(1, +url.searchParams.get('days') || 10));
-      try { const r = await bridge(env, 'freebusy', { from: new Date().toISOString(), to: new Date(Date.now() + (days + 1) * 864e5).toISOString() }); const open = (r.open || []).map(([s, e]) => [+s, +e]); return json({ slots: gridSlots((r.busy || []).map(([s, e]) => [+s, +e]), env, days, open), live: true, mode: open.length ? 'open-windows' : 'grid' }, 200, origin); }
+      const days = Math.min(30, Math.max(1, +url.searchParams.get('days') || 10)), minutes = minutesFor(env, url.searchParams.get('service'), url.searchParams.get('minutes'));
+      try { const r = await bridge(env, 'freebusy', { from: new Date().toISOString(), to: new Date(Date.now() + (days + 1) * 864e5).toISOString() }); const open = (r.open || []).map(([s, e]) => [+s, +e]); return json({ slots: gridSlots((r.busy || []).map(([s, e]) => [+s, +e]), env, days, open, minutes), live: true, minutes, mode: open.length ? 'open-windows' : env.FALLBACK_GRID === '1' ? 'grid' : 'none' }, 200, origin); }
       catch (e) { return json({ slots: [], demo: true, error: e.message }, 200, origin); }
     }
     if (req.method === 'GET' && url.pathname === '/api/assistant/calendar-check') {                       // open in a browser to confirm the bridge works

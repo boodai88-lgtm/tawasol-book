@@ -22,7 +22,7 @@
     minorsNote: { en: 'For under-18s, a parent or guardian attends the first visit. [confirm]', ar: 'لمن هم دون ١٨ عاماً، يحضر أحد الوالدين أو الوصي الزيارة الأولى. [للتأكيد]' },
     bookSite: 'https://www.amazon.com/s?k=Tawasol+Bibi+Alamiri',   // the book is sold on Amazon only; paste the exact product link when available
     /* Appointment calendar. DEMO: simulated Google Calendar with these hours. LIVE: the Worker reads free/busy from googleCalendarId (see api/src/calendar.js). */
-    calendar: { tz: 'Asia/Kuwait', days: [0, 1, 2, 3, 4], start: '10:00', end: '18:00', slotMin: 50, leadHours: 20, googleCalendarId: '[confirm: clinic calendar id, e.g. tawasol.clinic@gmail.com]' },
+    calendar: { tz: 'Asia/Kuwait', days: [0, 1, 2, 3, 4], start: '10:00', end: '18:00', slotMin: 50, followupMin: 25, /* consultation 50 min, follow-up 25 min (fee card, Nov 2026) */ leadHours: 20, googleCalendarId: '[confirm: clinic calendar id, e.g. tawasol.clinic@gmail.com]' },
     /* Google Forms the assistant shares after a booking is placed. Staff own payments and intake — the assistant only sends the links. Replace the placeholder URLs with the real forms (see assistant/README.md for the suggested fields). */
     forms: {
       intake: { en: 'https://forms.gle/REPLACE-intake-en', ar: 'https://forms.gle/REPLACE-intake-ar' },
