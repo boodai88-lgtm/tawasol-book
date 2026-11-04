@@ -14,7 +14,7 @@
   const label = (iso, lang) => { const d = new Date(iso), ar = lang === 'ar', h = d.getHours(), m = d.getMinutes(), time = ar ? `${h > 12 ? h - 12 : h}:${pad(m)} ${h >= 12 ? 'م' : 'ص'}` : `${h > 12 ? h - 12 : h}:${pad(m)} ${h >= 12 ? 'pm' : 'am'}`; return ar ? `${DAY_AR[d.getDay()]} ${d.getDate()} ${MON_AR[d.getMonth()]} · ${time}` : `${DAY_EN[d.getDay()]} ${d.getDate()} ${MON_EN[d.getMonth()]} · ${time}`; };
   const caches = {}; let serverDemo = false;                                   // one cache per slot length: { list, at }
   function demoSlots(days, step) {
-    const c = cfg(), open = c.days || [0, 1, 2, 3, 4], [sh, sm] = hm(c.start || '10:00'), [eh, em] = hm(c.end || '18:00'), lead = c.leadHours == null ? 20 : c.leadHours; step = step || c.slotMin || 50;
+    const c = cfg(), open = c.days || [0, 1, 2, 3, 4], [sh, sm] = hm(c.start || '15:00'), [eh, em] = hm(c.end || '19:30'), lead = c.leadHours == null ? 20 : c.leadHours; step = step || c.slotMin || 50;
     const taken = new Set(store().bookings.map((b) => b.slot)), out = [], now = Date.now(); let d = new Date(); d.setHours(0, 0, 0, 0);
     for (let i = 0; i < days && out.length < 40; i++, d.setDate(d.getDate() + 1)) {
       if (!open.includes(d.getDay())) continue;

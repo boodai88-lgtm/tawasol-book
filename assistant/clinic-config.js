@@ -7,7 +7,7 @@
     city: { en: 'Kuwait', ar: 'الكويت' },
     address: { en: 'MEDC2 Complex, Sabah Al-Salem, Block 1, Street 106, 7th floor — beside AlMezzan Pharmacy', ar: 'مجمع MEDC2، صباح السالم، قطعة 1، شارع 106، الدور السابع، بجانب صيدلية الميزان' },   // sent by the team ONLY after confirmation (see mapLink)
     mapLink: 'https://maps.app.goo.gl/ndSysaztJUuQsEbS8',
-    hours: { en: 'Sunday to Thursday', ar: 'من الأحد إلى الخميس' },
+    hours: { en: 'Sunday, Monday and Wednesday, 3:00 to 7:30 pm', ar: 'الأحد والاثنين والأربعاء، من ٣:٠٠ إلى ٧:٣٠ مساءً' },   // Juana, 4 Nov 2026
     phone: '+965 6668 9362',                               // clinic WhatsApp (confirmed 3 Nov 2026)
     whatsappLink: 'https://wa.me/96566689362',
     emergency: { en: '112 (Kuwait emergency services)', ar: '١١٢ (الطوارئ في الكويت)' },
@@ -19,10 +19,13 @@
       { en: 'Follow-up session', ar: 'جلسة متابعة', price: 'KD 120', dur: { en: '25 minutes, all ages', ar: '٢٥ دقيقة، لجميع الأعمار' } },
     ],
     cancellation: { en: 'Same-day cancellations or rescheduling may result in the session fee being forfeited; please give at least 24 hours’ notice.', ar: 'قد يؤدي الإلغاء أو تغيير الموعد في اليوم نفسه إلى خسارة رسوم الجلسة؛ يرجى الإبلاغ قبل ٢٤ ساعة على الأقل.' },
+    /* Booking details. askAge=false → the assistant does not ask the age; instead it tells the client the team will request a Civil ID copy on WhatsApp to confirm (Juana, 4 Nov 2026 — pending Dr. Bibi). The ID is never collected in the chat. */
+    askAge: false,
+    civilIdNote: { en: 'To confirm the booking, the team will ask you on WhatsApp for a copy of the Civil ID of the person attending.', ar: 'لتأكيد الحجز سيطلب منك الفريق عبر واتساب صورة من البطاقة المدنية للشخص صاحب الموعد.' },
     minorsNote: { en: 'For under-18s, a parent or guardian attends the first visit. [confirm]', ar: 'لمن هم دون ١٨ عاماً، يحضر أحد الوالدين أو الوصي الزيارة الأولى. [للتأكيد]' },
     bookSite: 'https://www.amazon.com/s?k=Tawasol+Bibi+Alamiri',   // the book is sold on Amazon only; paste the exact product link when available
     /* Appointment calendar. DEMO: simulated Google Calendar with these hours. LIVE: the Worker reads free/busy from googleCalendarId (see api/src/calendar.js). */
-    calendar: { tz: 'Asia/Kuwait', days: [0, 1, 2, 3, 4], start: '10:00', end: '18:00', slotMin: 50, followupMin: 25, /* consultation 50 min, follow-up 25 min (fee card, Nov 2026) */ leadHours: 20, googleCalendarId: '[confirm: clinic calendar id, e.g. tawasol.clinic@gmail.com]' },
+    calendar: { tz: 'Asia/Kuwait', days: [0, 1, 3], start: '15:00', end: '19:30', slotMin: 50, followupMin: 25, /* consultation 50 min, follow-up 25 min (fee card, Nov 2026) */ leadHours: 20, googleCalendarId: '[confirm: clinic calendar id, e.g. tawasol.clinic@gmail.com]' },
     /* Google Forms the assistant shares after a booking is placed. Staff own payments and intake — the assistant only sends the links. Replace the placeholder URLs with the real forms (see assistant/README.md for the suggested fields). */
     forms: {
       intake: { en: 'https://forms.gle/REPLACE-intake-en', ar: 'https://forms.gle/REPLACE-intake-ar' },
