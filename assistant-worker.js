@@ -74,7 +74,9 @@ export default {
     if (req.method === 'GET' && url.pathname === '/api/assistant/slots') {
       if (!bridgeOn(env)) return json({ slots: [], demo: true }, 200, origin);                              // demo calendar stays in the browser until the bridge is set
       const days = Math.min(30, Math.max(1, +url.searchParams.get('days') || 10)), minutes = minutesFor(env, url.searchParams.get('service'), url.searchParams.get('minutes'));
-      try { const r = await bridge(env, 'freebusy', { from: new Date().toISOString(), to: new Date(Date.now() + (days + 1) * 864e5).toISOString() }); const open = (r.open || []).map(([s, e]) => [+s, +e]); return json({ slots: gridSlots((r.busy || []).map(([s, e]) => [+s, +e]), env, days, open, minutes), live: true, minutes, mode: open.length ? 'open-windows' : 'clinic-hours' }, 200, origin); }
+      try { const r = await bridge(env, 'freebusy', { from: new Date().toISOString(), to: new Date(Date.now() + (days + 1) * 864e5).toISOString() }); const open = (r.open || []).map(([s, e]) => [+s, +e]); const busy = (r.busy || []).map(([s, e]) => [+s, +e]), out = { slots: gridSlots(busy, env, days, open, minutes), live: true, minutes, mode: open.length ? 'open-windows' : 'clinic-hours' };
+        if (url.searchParams.get('debug') === '1') { const loc = (ms) => new Date(ms + 3 * 3600e3).toISOString().slice(0, 16).replace('T', ' '); Object.assign(out, { debug: { now_kuwait: loc(Date.now()), lead_hours: env.LEAD_HOURS == null ? 20 : +env.LEAD_HOURS, clinic_days: env.CLINIC_DAYS || '0,1,3 (default)', clinic_start: env.CLINIC_START || '15:00 (default)', clinic_end: env.CLINIC_END || '19:30 (default)', busy: busy.map(([s, e]) => loc(s) + ' → ' + loc(e)), open: open.map(([s, e]) => loc(s) + ' → ' + loc(e)) } }); }
+        return json(out, 200, origin); }
       catch (e) { return json({ slots: [], demo: true, error: e.message }, 200, origin); }
     }
     if (req.method === 'GET' && url.pathname === '/api/assistant/inbox-check') {                         // opens/creates the inbox sheet and shows its link

@@ -59,8 +59,8 @@
   /* Synchronous read for the assistant's chips. opts.service picks the slot length; opts.prefer (the client's free text) filters to their days/times — result.matched says whether anything fitted; otherwise the nearest times are returned. */
   function slots(lang, opts = {}) {
     const minutes = opts.minutes || minutesFor(opts.service), c = caches[minutes];
-    if (!c || Date.now() - c.at > 60e3) { refresh(14, minutes); }
-    const all = c ? c.list : (api() ? (caches[cfg().slotMin || 50] || { list: [] }).list : demoSlots(14, minutes));
+    if (!c || Date.now() - c.at > 60e3) { refresh(30, minutes); }
+    const all = c ? c.list : (api() ? (caches[cfg().slotMin || 50] || { list: [] }).list : demoSlots(30, minutes));
     const pref = opts.prefer ? parsePreference(opts.prefer) : null, filtered = pref && !pref.any ? all.filter((iso) => matches(iso, pref)) : all, matched = !!pref && (pref.any || filtered.length > 0);
     const list = filtered.length ? filtered : all, perDay = opts.perDay || 2, maxDays = opts.days || 3, byDay = {}; for (const iso of list) { const k = iso.slice(0, 10); (byDay[k] = byDay[k] || []).push(iso); }
     const out = Object.keys(byDay).sort().slice(0, maxDays).flatMap((k) => byDay[k].slice(0, perDay)).map((iso) => ({ id: iso, title: label(iso, lang), iso, minutes }));
@@ -69,5 +69,5 @@
   function book(slot, data) { if (api() && !serverDemo) return { ok: true, server: true }; const s = store(); if (s.bookings.some((b) => b.slot === slot)) return { ok: false, taken: true }; s.bookings.push({ slot, name: data && data.name || '', service: data && data.service || '', phone: data && data.phone || '', minutes: minutesFor(data && data.service), at: new Date().toISOString(), status: 'tentative' }); save(s); for (const k in caches) delete caches[k]; return { ok: true, demo: true }; }
   function bookings() { return store().bookings.sort((a, b) => a.slot.localeCompare(b.slot)); }
   function clearDemo() { localStorage.removeItem(KEY); for (const k in caches) delete caches[k]; }
-  g.TawasolScheduler = { slots, book, bookings, label, refresh, clearDemo, minutesFor, parsePreference, isDemo: () => !api() || serverDemo, ready: Promise.all([refresh(14, cfg().slotMin || 50), refresh(14, cfg().followupMin || 25)]) };
+  g.TawasolScheduler = { slots, book, bookings, label, refresh, clearDemo, minutesFor, parsePreference, isDemo: () => !api() || serverDemo, ready: Promise.all([refresh(30, cfg().slotMin || 50), refresh(30, cfg().followupMin || 25)]) };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
