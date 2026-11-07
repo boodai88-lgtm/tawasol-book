@@ -1,7 +1,7 @@
 /* Tawasol scheduler · appointment slots for the assistant.
    DEMO (no api/assistantApi in config.js — local preview only): a simulated Google Calendar — clinic hours from clinic-config, a few pre-blocked slots, bookings kept in this browser (localStorage) so the demo feels real.
    LIVE (api or assistantApi set): slots come from /api/assistant/slots?minutes=50|25 (Google Calendar through the Worker) and bookings are held server-side.
-   Slot length follows the service: consultation = slotMin (50), follow-up = followupMin (25). */
+   Session length follows the service (50 / 20 min); the WORKER pads each to its calendar block (60 / 30 min) when listing free times and placing holds. */
 (function (g) {
   const cfg = () => (g.TAWASOL_CLINIC && g.TAWASOL_CLINIC.calendar) || {}, C = () => g.TAWASOL_CONFIG || {}, api = () => String(C().api || C().assistantApi || '').replace(/\/$/, '');
   const KEY = 'tw_demo_calendar', DAY_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], DAY_AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'], MON_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], MON_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];

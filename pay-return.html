@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Payment · Tawasol</title>
+<meta name="robots" content="noindex"><meta name="theme-color" content="#f3eddf"><link rel="stylesheet" href="site.css?v=20261107"><link rel="stylesheet" href="hub.css?v=20261107">
+<script src="config.js?v=20261107"></script><script src="i18n.js?v=20261107"></script><script src="hub.js?v=20261107"></script>
+<style>.pr{max-width:560px;margin:0 auto;text-align:center;padding:40px 20px 60px}.pr .mark{width:88px;height:88px;margin:0 auto 18px;display:block}.pr h1{font-size:26px;margin:0 0 10px}.pr p{font-size:16px;line-height:1.6;color:#4a463f;margin:0 0 14px}.pr .ok{color:#5f7d4f}.pr .wait{color:#8b857a}.pr .btn{margin-top:10px}</style>
+</head>
+<body data-page="pay">
+<header class="nav" id="nav"></header>
+<main id="main" class="wrap"><div class="pr"><img class="mark" src="img/mark.png" alt=""><h1 id="t">Checking your payment…</h1><p id="m" class="wait">One moment, please.</p><div id="a"></div></div></main>
+<footer id="footer"></footer>
+<script>
+(function () {
+  const C = window.TAWASOL_CONFIG || {}, API = String(C.assistantApi || C.api || '').replace(/\/$/, ''), q = new URLSearchParams(location.search), ref = q.get('ref') || '', tapId = q.get('tap_id') || '';
+  let ar = document.documentElement.lang === 'ar';
+  const T = () => ar ? { checking: 'نتحقق من دفعك…', wait: 'لحظة من فضلك.', paid: 'شكراً لك، وصلنا دفعك', paidm: (s) => 'موعدك مؤكد: ' + s + '. أرسلنا التفاصيل والاستمارة القصيرة وموقع العيادة إلى واتسابك.', pending: 'لم يكتمل الدفع بعد', pendm: 'يمكنك إتمام الدفع عبر الرابط نفسه خلال المدة المحددة، وسنؤكد موعدك فور وصوله.', again: 'إتمام الدفع', expired: 'انتهت مدة الدفع', expm: 'حُرِّر الموعد لأن الدفع لم يكتمل خلال ٢٤ ساعة. يسعدنا أن نجد لك وقتاً آخر.', failed: 'لم تنجح عملية الدفع', failm: 'لم يُخصم أي مبلغ. يمكنك المحاولة مرة أخرى عبر الرابط نفسه أو التواصل معنا.', unknown: 'لم نتمكن من التحقق الآن', unkm: 'إن أُخذ المبلغ من حسابك فسيصلك التأكيد على الواتساب خلال دقائق؛ وإن لم يصلك فراسلنا.', back: 'العودة إلى تواصل', chat: 'الحديث مع تواصل' } : { checking: 'Checking your payment…', wait: 'One moment, please.', paid: 'Thank you — payment received', paidm: (s) => 'Your appointment is confirmed: ' + s + '. We’ve sent the details, a short form and the clinic location to your WhatsApp.', pending: 'Payment not completed yet', pendm: 'You can complete it through the same link within the time allowed; we confirm your appointment as soon as it arrives.', again: 'Complete payment', expired: 'The payment window has closed', expm: 'The time was released because the payment wasn’t completed within 24 hours. We’d be glad to find you another time.', failed: 'The payment didn’t go through', failm: 'Nothing was charged. You can try again through the same link, or message us.', unknown: 'We couldn’t verify it just now', unkm: 'If the amount was taken from your account, the confirmation will reach your WhatsApp within minutes; if not, message us.', back: 'Back to Tawasol', chat: 'Talk to Tawasol' };
+  const el = (id) => document.getElementById(id);
+  const show = (title, msg, cls, actions) => { const t = T(); el('t').textContent = title; el('m').textContent = msg; el('m').className = cls || ''; el('a').innerHTML = (actions || []).map((x) => '<a class="btn ' + (x.o ? 'btn-outline' : '') + '" href="' + x.href + '"' + (x.ext ? ' target="_blank" rel="noopener"' : '') + '>' + x.label + '</a>').join(' ') + ' <a class="btn btn-outline" href="clinic.html">' + t.chat + '</a>'; };
+  let tries = 0;
+  async function poll() { const t = T(); if (!API) return show(t.unknown, t.unkm, 'wait');
+    try { const r = await fetch(API + '/api/assistant/pay/status?ref=' + encodeURIComponent(ref) + '&tap_id=' + encodeURIComponent(tapId)).then((x) => x.json()); if (r.lang === 'ar' && !ar) { ar = true; document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
+      const t2 = T(); if (r.status === 'paid') return show(t2.paid, t2.paidm(r.slotLabel || ''), 'ok');
+      if (r.status === 'expired') return show(t2.expired, t2.expm, 'wait');
+      if (['failed', 'declined', 'cancelled', 'abandoned', 'restricted', 'timedout'].includes(String(r.status || r.tap || '').toLowerCase())) return show(t2.failed, t2.failm, 'wait', r.url ? [{ href: r.url, label: t2.again, ext: true }] : []);
+      if (r.status === 'pending' && tries >= 4) return show(t2.pending, t2.pendm, 'wait', r.url ? [{ href: r.url, label: t2.again, ext: true }] : []);
+      if (r.status === 'unknown' && tries >= 4) return show(t2.unknown, t2.unkm, 'wait');
+    } catch (_) { if (tries >= 4) return show(T().unknown, T().unkm, 'wait'); }
+    tries++; setTimeout(poll, 2500); }
+  el('t').textContent = T().checking; el('m').textContent = T().wait; poll();
+})();
+</script>
+</body>
+</html>

@@ -11,7 +11,7 @@
 const MODEL = 'claude-sonnet-4-5', MAX_TOKENS = 700, PER_MIN = 20;
 const hits = new Map();                                   // per-isolate rate limit (good enough for a test phase)
 const cors = (origin) => ({ 'access-control-allow-origin': origin, 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'GET, POST, OPTIONS', vary: 'origin' });
-const json = (o, status, origin) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json', ...cors(origin) } });
+const json = (o, status, origin, extra) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json', ...cors(origin), ...(extra || {}) } });
 const bridgeOn = (env) => !!(env.GCAL_BRIDGE_URL && env.GCAL_BRIDGE_SECRET);
 async function bridge(env, action, payload = {}) {
   const r = await fetch(env.GCAL_BRIDGE_URL, { method: 'POST', redirect: 'follow', headers: { 'content-type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: env.GCAL_BRIDGE_SECRET, action, ...payload }) });
@@ -78,6 +78,14 @@ export default {
         if (url.searchParams.get('debug') === '1') { const loc = (ms) => new Date(ms + 3 * 3600e3).toISOString().slice(0, 16).replace('T', ' '); Object.assign(out, { debug: { now_kuwait: loc(Date.now()), lead_hours: env.LEAD_HOURS == null ? 20 : +env.LEAD_HOURS, clinic_days: env.CLINIC_DAYS || '0,1,3 (default)', clinic_start: env.CLINIC_START || '15:00 (default)', clinic_end: env.CLINIC_END || '19:30 (default)', busy: busy.map(([s, e]) => loc(s) + ' → ' + loc(e)), open: open.map(([s, e]) => loc(s) + ' → ' + loc(e)) } }); }
         return json(out, 200, origin); }
       catch (e) { return json({ slots: [], demo: true, error: e.message }, 200, origin); }
+    }
+    if (req.method === 'GET' && url.pathname === '/api/assistant/forms') {                              // public: the two Google Forms links (created via forms-setup); the website reads this at load
+      if (!bridgeOn(env)) return json({ ok: false, intake: null, consent: null }, 200, origin);
+      try { const f = await bridge(env, 'forms'); return json({ ok: true, intake: f.intake ? f.intake.url : null, consent: f.consent ? f.consent.url : null }, 200, origin, { 'cache-control': 'public, max-age=600' }); } catch (e) { return json({ ok: false, error: e.message }, 200, origin); }
+    }
+    if (req.method === 'GET' && url.pathname === '/api/assistant/forms-setup') {                        // open once in a browser: creates the forms in the clinic account and returns links + edit links
+      if (!bridgeOn(env)) return json({ ok: false, error: 'GCAL_BRIDGE_URL / GCAL_BRIDGE_SECRET not set' }, 200, origin);
+      try { return json(await bridge(env, 'create_forms', { force: url.searchParams.get('force') || '' }), 200, origin); } catch (e) { return json({ ok: false, error: e.message }, 200, origin); }
     }
     if (req.method === 'GET' && url.pathname === '/api/assistant/inbox-check') {                         // opens/creates the inbox sheet and shows its link
       if (!bridgeOn(env)) return json({ ok: false, error: 'GCAL_BRIDGE_URL / GCAL_BRIDGE_SECRET not set' }, 200, origin);
