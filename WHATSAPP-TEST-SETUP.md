@@ -54,3 +54,15 @@ business.facebook.com → **Settings → Users → System users → Add**: name 
 - Moving to **66689362** needs business verification (META-SETUP.md §4–5) and the number removed from the WhatsApp app first.
 
 Done = step 8 works twice in a row in English and Arabic. Then tell me and I'll do the first supervised run with Dr. Bibi.
+
+## 11. If "hi" never reaches Cloudflare — the self-check
+Add two more worker variables, deploy, then open the check URL in a browser:
+- `WABA_ID` = the **Messaging account ID** shown on Step 1 (e.g. 1117319684638610)
+- optional `WA_KV`: Workers & Pages → KV → *Create namespace* "tawasol-wa" → worker → Settings → Bindings → Add → KV namespace, variable name `WA_KV`. Keeps each chat's position across restarts; without it a conversation may restart after a quiet period.
+
+`https://aged-mud-dbb7.boodai88.workers.dev/api/assistant/wa/diag?key=<your META_VERIFY_TOKEN>`
+
+The page lists what is configured and, under **hint**, whether the WhatsApp account is subscribed to this app. "NOT subscribed" is the usual reason inbound messages never arrive — open the same URL again with `&fix=1` and it subscribes itself. Add `&send=1` to send a test message to TEAM_WHATSAPP (confirms the token). Then WhatsApp "hi" again.
+
+## 12. What the assistant does on WhatsApp now
+Language choice → menu (book · fees · location & hours · message for Dr. Bibi · ask a question) → booking with the real free times (padded calendar grid), hold + Tap payment link + cancellation policy, team alert → Dr. Bibi relay (`TW-XXXX: reply`) → Claude answers for free questions with the same facts and limits as the website → crisis wording triggers the 112 message and a team alert. Each chat remembers its position for 48 hours.
