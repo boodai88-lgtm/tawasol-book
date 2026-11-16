@@ -25,7 +25,7 @@
     return out;
   }
   async function refresh(days, minutes) {
-    days = days || 10; minutes = minutes || cfg().slotMin || 50;
+    days = days || 42;   // six-week horizon — the clinic diary is often full for 2–3 weeks minutes = minutes || cfg().slotMin || 50;
     if (!api()) { caches[minutes] = { list: demoSlots(days, minutes), at: Date.now() }; return caches[minutes].list; }
     // LIVE: whatever the worker returns is the truth. No OPEN events (or calendar not connected / unreachable) → an empty list, never invented hours; the assistant then asks for a preferred time and the team arranges it.
     try { const r = await fetch(api() + `/api/assistant/slots?days=${days}&minutes=${minutes}`); const j = await r.json(); serverDemo = !!j.demo; caches[minutes] = { list: j.slots || [], at: Date.now() }; }
