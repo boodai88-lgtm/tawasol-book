@@ -66,7 +66,7 @@
   }
   function footer() {
     const host = $('#footer'); if (!host) return;
-    host.innerHTML = `<div class="wrap"><div><img src="img/logo.png" alt="Tawasol"><p>${t('foot_about')}</p></div><div class="cols"><div><b>${t('foot_clinic')}</b><a href="clinic.html">${t('nav_clinic')}</a><a href="clinic.html#forms-card">${lang === 'ar' ? 'النماذج' : 'Forms'}</a><a href="index.html#book">${t('nav_book')}</a></div><div><b>${t('foot_tawasol')}</b><a href="mailto:${C.supportEmail}">${t('foot_support')}</a><a href="help.html">${lang === 'ar' ? 'المساعدة' : 'Help'}</a><a href="legal.html#terms">${t('foot_terms')}</a><a href="legal.html#privacy">${t('foot_privacy')}</a></div></div><div class="fine"><span>© ${new Date().getFullYear()} Tawasol · Dr. Bibi Alamiri</span><span>${t('foot_fine')}</span></div></div>`;
+    host.innerHTML = `<div class="wrap"><div><img src="img/logo.png" alt="Tawasol"><p>${t('foot_about')}</p></div><div class="cols"><div><b>${t('foot_clinic')}</b><a href="clinic.html">${t('nav_clinic')}</a><a href="clinic.html#forms-card">${lang === 'ar' ? 'النماذج' : 'Forms'}</a><a href="index.html#book">${t('nav_book')}</a></div><div><b>${t('foot_tawasol')}</b><a href="mailto:${C.supportEmail}">${t('foot_support')}</a><a href="legal.html#terms">${t('foot_terms')}</a><a href="legal.html#privacy">${t('foot_privacy')}</a></div></div><div class="fine"><span>© ${new Date().getFullYear()} Tawasol · Dr. Bibi Alamiri</span><span>${t('foot_fine')}</span></div></div>`;
   }
   function continuePill() {
     const host = $('#continue'); if (!host) return; const last = JSON.parse(localStorage.getItem('tw_last_listen') || 'null'); if (!last || !token()) return;

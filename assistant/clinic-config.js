@@ -34,8 +34,8 @@
     payment: { provider: 'tap', hours: 24, reminderHoursBefore: 2 },
     /* Medication refills: valid until `months` after the last psychiatric follow-up; after that a follow-up session is needed. Paper copies can be collected at the clinic in opening hours. */
     refill: { months: 6, pickup: true },
-    /* Dr. Bibi's WhatsApp — receives "message for the doctor", "call request" and refill requests with the client's file; her replies are relayed to the client. */
-    doctor: { whatsapp: '96550603032', replyWindow: { en: 'within 24 hours', ar: 'خلال ٢٤ ساعة' }, callMinutes: { en: '3 to 5 minutes', ar: '٣ إلى ٥ دقائق' } },
+    /* Messages, call requests and clinical questions reach Dr. Bibi through the assistant's server. Her number is kept in the server settings only, never in this public file. */
+    doctor: { replyWindow: { en: 'within 24 hours', ar: 'خلال ٢٤ ساعة' }, callMinutes: { en: '3 to 5 minutes', ar: '٣ إلى ٥ دقائق' } },
     askAge: false,                                         // the Civil ID copy (requested after payment) carries the age; the assistant never asks it
     askMode: true,                                         // in person / online question
     civilIdNote: { en: 'With your confirmation we will also ask for a copy of the Civil ID of the person attending.', ar: 'مع التأكيد سنطلب أيضاً صورة من البطاقة المدنية لصاحب الموعد.' },
